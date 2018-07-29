@@ -4,7 +4,7 @@ class PostForm  (forms.Form):
     # id = forms.IntegerField()
     # start_date = forms.DateField()
     # end_date = forms.DateField()
-    CHOICES = (('Kaspi', 'Kaspi'), ('Nurbank', 'Nurbank'),)
+    CHOICES = (('Kaspi', 'Kaspi'), ('Nurbank', 'Nurbank'), ('Tourism', 'Tourism'), ('Kazkom', 'Kazkom'))
     name = forms.ChoiceField(choices=CHOICES)
 
 class UpdateForm(forms.Form):

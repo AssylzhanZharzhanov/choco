@@ -4,7 +4,7 @@ from project.forms import PostForm
 from .models import Transaction
 from project.forms import UpdateForm
 from project.GmailParser import Parser
-from project.models import Payment,KaspiParser,NurbankParser,KazkomParse,ToursimParser
+from project.models import Payment,KaspiParser,NurbankParser,KazkomParser,ToursimParser
 import logging
 logger = logging.getLogger(__name__)
 # Create your views here.
@@ -87,7 +87,7 @@ class ParseForm(TemplateView):
                         tourism = ToursimParser(j)
                         tourism.getParse()
                     if names[i] == 'kazkom':
-                        kazkom = KaspiParser(j)
+                        kazkom = KazkomParser(j)
                         kazkom.getParse()
         return redirect('/transaction')
 

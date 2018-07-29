@@ -1,10 +1,14 @@
 import datetime
 import os
-from dateutil.parser import parser
+# from dateutil.parser import parser
 from django.db import models
 from django.utils import timezone
 from django.utils import dates
 from bs4 import BeautifulSoup
+import re
+import codecs
+import datetime
+from dateutil import parser
 import re
 import codecs
 import pandas as pd
@@ -101,7 +105,7 @@ class NurbankParser:
             datas.append(data)
         insertData(datas)
         # return datas
-class KazkomParse:
+class KazkomParser:
     def __init__(self, file):
         self.file = file
     def getParse(self):
@@ -114,18 +118,14 @@ class KazkomParse:
         datas = []
         for i in range(1, len(tr)):
             data = {
-                'id': tr[i].find_all('td')[4].text,
+                'id': int(tr[i].find_all('td')[4].text),
                 'date': datetime.datetime.date(parser.parse(tr[i].find_all('td')[1].text)),
-                'transfer': tr[i].find_all('td')[8].text,
-                'fee': tr[i].find_all('td')[9].text,
-                'total': tr[i].find_all('td')[10].text,
+                'transfer': float(tr[i].find_all('td')[8].text),
+                'fee': float(tr[i].find_all('td')[9].text),
+                'total': float(tr[i].find_all('td')[10].text),
                 'bank':'Kazkom'
             }
             datas.append(data)
-            f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
-            for i in datas:
-                f.write(i)
-
         insertData(datas)
 
 class ToursimParser:

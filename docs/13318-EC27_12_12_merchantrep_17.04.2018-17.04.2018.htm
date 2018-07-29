@@ -1,0 +1,282 @@
+<html>
+    <head>
+    <meta charset="utf-8">
+<style type="text/css">
+
+#outlook a {padding: 0px;} /* Force Outlook to provide a "view in browser" menu link. */
+body{width: 100% !important;
+-ms-text-size-adjust: 100%;
+margin: 0px;
+padding: 0px;} /* Prevent Webkit and Windows Mobile platforms from changing default font sizes.*/
+.ExternalClass {width: 100%;} /* Force Hotmail to display emails at full width */
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div
+ {line-height: 100%;}/* Forces Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
+
+#backgroundTable {
+margin-top: 0px;
+margin-right: auto;
+margin-bottom: 0px;
+margin-left: auto;
+line-height: 100% !important;
+padding-top: 0px;
+padding-right: 0px;
+padding-bottom: 0px;
+padding-left: 0px;}
+
+img {
+outline-style: none;
+outline-width: medium;
+outline-color: invert;
+text-decoration: none;
+-ms-interpolation-mode: bicubic;}
+
+a img {
+border-top-style: none;
+border-right-style: none;
+border-bottom-style: none;
+border-left-style: none;
+border-top-color: currentColor;
+border-right-color: currentColor;
+border-bottom-color: currentColor;
+border-left-color: currentColor;
+border-top-width: medium;
+border-right-width: medium;
+border-left-width: medium;
+border-bottom-width: medium;
+}
+
+.image_fix {display: block;}
+
+p {
+margin-top: 1em;
+margin-right: 0px;
+margin-bottom: 1em;
+margin-left: 0px;}
+
+h1, h2, h3, h4, h5, h6 {color: black;}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: blue !important;}
+
+h1 a:active, h2 a:active,  h3 a:active, h4 a:active, h5 a:active, h6 a:active {
+color: red !important;
+}
+
+h1 a:visited, h2 a:visited,  h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+color: purple !important; }
+
+
+table td {
+border-collapse: collapse;
+padding: 0px;
+font-family: tahoma, Arial, "Helvetica Neue", Helvetica, sans-serif;
+vertical-align: top;
+color: #464646;
+font-size: 12px;}
+
+table th {
+font-weight: normal;
+text-align: left;
+line-height: 17px;
+font-size: 12px;}
+
+.main-table {
+border-bottom-color: #408ada;
+border-bottom-width: 1px;
+border-bottom-style: solid;
+margin-bottom: 30px;
+}
+.main-table th {
+vertical-align: top;
+padding: 0px 3px 6px 7px;
+color: #00395d;
+border-bottom: 1px solid #d7e5ee;
+}
+.main-table td {
+padding: 8px 3px 5px 7px;
+line-height: 17px;}
+
+.main-table tr:hover td{
+background-color: #d7e5ee;}
+
+
+.main-table td b {
+color: #00395d;}
+
+.main-table tr:hover td:nth-child(9){
+color: #00395d;}
+
+.main-table.second-table  th {
+font-size: 15px;
+font-weight: bold;}
+
+table {
+border-collapse:collapse;
+ padding: 0px;}
+
+
+a {color: #408ada;}
+a:hover {color: #00395d;}
+
+
+
+    /***************************************************
+    ****************************************************
+    MOBILE TARGETING
+    ****************************************************
+    ***************************************************/
+    @media only screen and (max-device-width: 480px) {
+      /* Part one of controlling phone number linking for mobile. */
+      a[href^="tel"], a[href^="sms"] {
+            text-decoration: none;
+            color: blue;
+            pointer-events: none;
+            cursor: default;
+          }
+
+      .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+            text-decoration: default;
+            color: orange !important;
+            pointer-events: auto;
+            cursor: default;
+          }
+
+    }
+
+    /* More Specific Targeting */
+
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    /* You guessed it, ipad (tablets, smaller screens, etc) */
+      /* repeating for the ipad */
+      a[href^="tel"], a[href^="sms"] {
+            text-decoration: none;
+            color: blue; /* or whatever your want */
+            pointer-events: none;
+            cursor: default;
+          }
+
+      .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+            text-decoration: default;
+            color: orange !important;
+            pointer-events: auto;
+            cursor: default;
+          }
+    }
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+    /* Put your iPhone 4g styles in here */
+    }
+
+    /* Android targeting */
+    @media only screen and (-webkit-device-pixel-ratio:.75){
+    /* Put CSS for low density (ldpi) Android layouts in here */
+    }
+    @media only screen and (-webkit-device-pixel-ratio:1){
+    /* Put CSS for medium density (mdpi) Android layouts in here */
+    }
+    @media only screen and (-webkit-device-pixel-ratio:1.5){
+    /* Put CSS for high density (hdpi) Android layouts in here */
+    }
+
+
+
+</style>
+
+
+            </head><body><table cellpadding="0" cellspacing="0" align="center"><tr><td valign="top"><table id="page-top" cellpadding="0" cellspacing="0" width="800px" align="left"><tr><td height="5" bgcolor="#408ada"></td></tr><tr><td style="padding-bottom: 70px;"><table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                        <td width="120px" style="padding-left: 10px;padding-top: 41px; padding-bottom: 40px;"><a href="#"><img src="http://markup.rocketfirm.com/fams/img/logo.png" alt="" /></a></td>
+                    <td  align="center" style="padding-top: 29px;font-size: 14px; padding-bottom: 40px;">
+                    <h1 style="color: #00395d; margin: 0 0 4px;font-size: 26px;">КАЗКОМ</h1>
+                    <strong style="color: #00395d;font-size: 20px;margin-bottom: 8px;display: block;">Выписка торговой активности коммерсанта</strong>
+                    <div style="margin-bottom: 10px;margin-bottom: 18px;">За период с <b>17.04.2018</b> по <b>17.04.2018</b> (включительно)</div>
+                    <div>Коммерсант: <b>13312</b>,INTERNET TURIZM LLP,CHOCOTRAVEL.COM.<br/></div>
+                      </td>
+                  <td width="130px"></td>
+                </tr>
+      </table><table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px;">
+                <tr>
+                  <td height="47px" style="border-top: 1px solid #408ada;border-bottom: 1px solid #408ada;vertical-align: middle;font-size: 15px;padding-left: 7px;"><a style="text-decoration: none;border-bottom: 1px dashed;" href="#date17.04.2018">17.04.2018</a> <a style="margin-left: 12px;text-decoration: none;border-bottom: 1px dashed" href="#itog">Итог</a></td></tr></table><div style="text-align: center;font-size: 14px;">Все транзакции указаны в KZT</div><div id="date17-Apr-2018" style="color: #00395d;margin-bottom: 37px;padding-left: 7px;">
+              <a style="text-decoration: none;float: right;font-size: 15px;" href="#page-top"><u style="text-decoration: none;border-bottom: 1px dashed;">Наверх</u></a>
+      <h1 style="font-size: 20px;color: #00395d;margin: 0 0 10px;">Дата зачисления:17.04.2018</h1>
+      <a style="text-decoration: none;border-bottom: 1px dashed" href="#17-Apr-2018">Итоговая сумма</a>: <b>0</b> <span style="color: #464646;">№ П4</span>
+        </div><table class="main-table" cellpadding="0" cellspacing="0"  style="border-bottom: 1px solid #408ada;margin-bottom: 30px;" width="100%"><tr><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">Post Date</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">Trans. Date</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">Card # </th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">Type</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">A Code</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;"> Device #</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;">Type</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;"><b>Ret Ref Number</th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;text-align: right;" width="80px"><b>Trans.<br/>Amount</b></th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;text-align: right;" width="80px"><b>Fee<br/>Amount</b></th><th style="font-weight: normal;text-align: left;vertical-align: top;padding: 0px 3px 6px 7px;color: #00395d;border-bottom: 1px solid #d7e5ee;text-align: right;padding-right: 10px;" width="80px"><b>Settl.<br/>Amount</b></th></tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >21.08.2017 23:51:09</td>
+        <td style="padding: 8px 3px 5px 7px;" >535188...1425</td>
+        <td style="padding: 8px 3px 5px 7px;">MC</td>
+        <td style="padding: 8px 3px 5px 7px;">524024</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">723381106585</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">-83694</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">1004.32</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">-82689.68</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >30.01.2018 16:46:28</td>
+        <td style="padding: 8px 3px 5px 7px;" >400303...2496</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">494458</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">803081822428</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">-9941</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">59.65</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">-9881.35</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:38:02</td>
+        <td style="padding: 8px 3px 5px 7px;" >557834...0205</td>
+        <td style="padding: 8px 3px 5px 7px;">MCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">456162</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781429792</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">114982</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-689.89</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">114292.11</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:44:45</td>
+        <td style="padding: 8px 3px 5px 7px;" >440563...2232</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">450967</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781430475</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">15816</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-94.9</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">15721.1</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:48:19</td>
+        <td style="padding: 8px 3px 5px 7px;" >427717...1757</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">596822</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781430811</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">357710</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-2146.26</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">355563.74</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:49:15</td>
+        <td style="padding: 8px 3px 5px 7px;" >400303...0410</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">783904</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781430914</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">38338</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-230.03</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">38107.97</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:56:04</td>
+        <td style="padding: 8px 3px 5px 7px;" >400303...0410</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">783905</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781431485</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">37412</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-224.47</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">37187.53</b></td>
+      </tr><tr><td style="padding: 8px 3px 5px 7px;" >17.04.2018</td><td style="padding: 8px 3px 5px 7px;" >17.04.2018 23:59:40</td>
+        <td style="padding: 8px 3px 5px 7px;" >400303...9030</td>
+        <td style="padding: 8px 3px 5px 7px;">VCKB</td>
+        <td style="padding: 8px 3px 5px 7px;">292436</td>
+        <td style="padding: 8px 3px 5px 7px;">98128981</td>
+        <td style="padding: 8px 3px 5px 7px;">POS</td>
+        <td style="padding: 8px 3px 5px 7px;">810781431777</td>
+        <td style="text-align: right;padding: 8px 3px 5px 7px;" width="80px">5000</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px">-30</td>
+        <td style="text-align: right; padding: 8px 3px 5px 7px;" width="80px"><b style="color: #00395d;">4970</b></td>
+      </tr></table>

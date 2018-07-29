@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p> Transaction List </p>
+
+    <div class="select2-container">
+        <form method='post'>
+            {% csrf_token %}
+             {{ form.as_p }}
+{#            <input type="text" name="ids">#}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+<h3> {{ ids }}</h3>
+{#<p> {{ transactions }}</p>#}
+
+{% for i in transactions %}
+    <div>
+        <p>Date: {{ i.date }}</p>
+        <p>Name: {{ i.name }}</p>
+        <p>Transfer:{{ i.amount }}</p>
+        <p>Fee: {{ i.comission }}</p>
+    </div>
+{% endfor %}
+
+
+</body>
+</html>

@@ -34,10 +34,12 @@ attachment_dir = '/home/mrx/Documents/choko-master/docs/'
 def insertData(datas):
     for i in range(0, len(datas)):
         transactions = Transaction.objects.filter(id=datas[i]['id'])
-        if(len(transaction) == 0):
+        if(len(transactions) == 0):
             transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'])
             transaction.save()
+
+        #else comparing by datas and total sum
 
 
 class KaspiParser:
@@ -49,7 +51,7 @@ class KaspiParser:
         df = pd.DataFrame(df)
         dates = df['Дата транзакции'].dt.date
         ids = df['Номер Транзакции']
-        comision = df['Комиссия']
+        comision = df['Комиссия']   
         total = df['Итого к перечислению']
         amount  = df['Сумма']
         datas = []
@@ -91,7 +93,7 @@ class NurbankParser:
             data = {
                 'id': ids[i],
                 'date': dates[i],
-                'amount': amount[i],
+                'transfer': amount[i],
                 'total': amount[i],
                 'bank': 'Nurbank',
                 'fee':0
@@ -120,14 +122,18 @@ class KazkomParse:
                 'bank':'Kazkom'
             }
             datas.append(data)
+            f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
+            for i in datas:
+                f.write(i)
+
         insertData(datas)
 
 class ToursimParser:
     def __init__(self, file):
-        self.file = file
+        self.file = attachment_dir + file
 
     def getParse(self):
-        df = pd.read_excel(self.filename)
+        df = pd.read_excel(self.file)
         df = pd.DataFrame(df)
         cols = df.iloc[0]
         col = []

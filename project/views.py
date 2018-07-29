@@ -65,14 +65,14 @@ class ParseForm(TemplateView):
             simplelist = self.simplelist
             if len(simplelist) > 0 :
                 newFiles = True
-            args = {'bank': simplelist[1].getName(), 'files': simplelist[1].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
+            args = {'bank': simplelist[3].getName(), 'files': simplelist[3].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
             return render(request, 'project/update_list.html', args)
 
         if submitbutton == "Parse":
             simplelist = self.simplelist
-            f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
-            f.write(str(len(simplelist)))
-            logger.debug(len(simplelist))
+            # f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
+            # f.write(str(len(simplelist)))
+            # logger.debug(len(simplelist))
             for i in range(0, len(simplelist)):
                 files = simplelist[i].getFiles()
                 name = simplelist[i].getName()
@@ -89,14 +89,14 @@ class ParseForm(TemplateView):
                     if names[i] == 'kazkom':
                         kazkom = KaspiParser(j)
                         kazkom.getParse()
-
-        # return render(request, 'project/update_list.html', {})
         return redirect('/transaction')
 
 def update_list(request):
      return render(request, 'project/update_list.html', {})
 
 
+
+# return render(request, 'project/update_list.html', {})
 
 # [
 #  {

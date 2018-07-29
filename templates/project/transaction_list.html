@@ -2,8 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Transactions</title>
 </head>
+<style>
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+</style>
 <body>
     <p> Transaction List </p>
 
@@ -16,7 +34,26 @@
         </form>
     </div>
 
-<h3> {{ l }}</h3>
+    <table>
+        <thead>
+        <th> ID </th>
+        <th> DATE </th>
+        <th> TRANSFER </th>
+        <th> FEE </th>
+        <th> TOTAL </th>
+        <th> BANK </th>
+        </thead>
+        {% for i in transactions %}
+        <tr>
+        <td> {{ i.id }}</td>
+        <td> {{ i.date }}</td>
+        <td> {{ i.transfer }}</td>
+        <td> {{ i.fee }}</td>
+        <td> {{ i.total }}</td>
+        <td> {{ i.name }}</td>
+        </tr>
+        {%  endfor %}
+    </table>
 {#<p> {{ transactions }}</p>#}
 {#{% for i in tr %}#}
 {#    <p> {{ i.name }} </p>#}

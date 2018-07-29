@@ -16,17 +16,21 @@
         </form>
     </div>
 
-<h3> {{ ids }}</h3>
+<h3> {{ l }}</h3>
 {#<p> {{ transactions }}</p>#}
+{#{% for i in tr %}#}
+{#    <p> {{ i.name }} </p>#}
+{##}
+{#{% endfor  %}#}
 
-{% for i in transactions %}
-    <div>
-        <p>Date: {{ i.date }}</p>
-        <p>Name: {{ i.name }}</p>
-        <p>Transfer:{{ i.amount }}</p>
-        <p>Fee: {{ i.comission }}</p>
-    </div>
-{% endfor %}
+{#{% for i in transactions %}#}
+{#    <div>#}
+{#        <p>Date: {{ i.date }}</p>#}
+{#        <p>Name: {{ i.name }}</p>#}
+{#        <p>Transfer:{{ i.transfer }}</p>#}
+{#        <p>Fee: {{ i.fee }}</p>#}
+{#    </div>#}
+{#{% endfor %}#}
 
 
 </body>

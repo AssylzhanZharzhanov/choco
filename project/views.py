@@ -21,6 +21,7 @@ class FormView(TemplateView):
         if form.is_valid():
             name = form.cleaned_data['name']
             transactions = Transaction.objects.filter(name__contains=name)
+            # tr = Transaction.objects.filter(id=4)
             # return redirect('/transaction')
             #check isequal or not
             args = {'form':form, 'transactions': transactions}

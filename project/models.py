@@ -33,10 +33,11 @@ attachment_dir = '/home/mrx/Documents/choko-master/docs/'
 
 def insertData(datas):
     for i in range(0, len(datas)):
-        # transactions = Transaction.objects.filter(id__contains=)
-        transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
+        transactions = Transaction.objects.filter(id=datas[i]['id'])
+        if(len(transaction) == 0):
+            transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'])
-        transaction.save()
+            transaction.save()
 
 
 class KaspiParser:
@@ -96,6 +97,7 @@ class NurbankParser:
                 'fee':0
             }
             datas.append(data)
+        insertData(datas)
         # return datas
 class KazkomParse:
     def __init__(self, file):
@@ -118,7 +120,7 @@ class KazkomParse:
                 'bank':'Kazkom'
             }
             datas.append(data)
-        return  datas
+        insertData(datas)
 
 class ToursimParser:
     def __init__(self, file):
@@ -151,7 +153,7 @@ class ToursimParser:
                 'bank': 'Tourism'
             }
             datas.append(data)
-        return  datas
+        insertData(datas)
 #design
 #4 excel forms
 #json reader

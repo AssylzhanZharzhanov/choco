@@ -8,20 +8,21 @@ import os.path
 import subprocess
 import re
 import sys
+from threading import Thread
 
 server = 'imap.gmail.com'
 login = "thementalistaz@gmail.com"
 password = "redjohnispj"
-attachment_dir = '/home/mrx/PycharmProjects/untitled1/docs'
+attachment_dir = '/home/mrx/Documents/choko-master/docs'
 
-class Parser:
-    def __init__(self, name):
+class Parser(Thread):
+    def __init__(self, name, file):
+        Thread.__init__(self)
         self.name = name
+        self.file = file
 
-    def getFilenames(self):
-        fileNames =self.parse()
-        return fileNames
-
+    def getFiles(self):
+       return self.file
     def get_attachment(self, msg, fileNames):
         for part in msg.walk():
             if part.get_content_maintype() == 'multipart':
@@ -31,13 +32,13 @@ class Parser:
             fileName = part.get_filename()
             fileName = email.header.make_header(email.header.decode_header(fileName))
             fileName = str(fileName)
-            fileNames.append(fileName)
+            self.file.append(fileName)
             if bool(fileName):
                 filePath = os.path.join(attachment_dir, fileName)
                 with open(filePath, 'wb') as f:
                     f.write(part.get_payload(decode=True))
 
-    def parse(self):
+    def run(self):
         imap = imaplib.IMAP4_SSL(server)
         imap.login(login, password)
         status, select_data = imap.select('INBOX')
@@ -50,7 +51,7 @@ class Parser:
             # print(msg)
             if (subtitle == self.name):
                 self.get_attachment(msg, fileNames)
-        return fileNames
+        return
 
 
 

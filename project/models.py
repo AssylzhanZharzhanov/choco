@@ -17,8 +17,8 @@ class Transaction(models.Model):
     fee = models.IntegerField()
     total = models.IntegerField()
 
-def insert(self):
-    self.save()
+# def insert(self):
+#     self.save()
 
 class Payment:
     def __init__(self, name, file):
@@ -29,7 +29,14 @@ class Payment:
     def getName(self):
         return  self.name
 
-attachment_dir = '/home/mrx/PycharmProjects/untitled1/docs/'
+attachment_dir = '/home/mrx/Documents/choko-master/docs/'
+
+def insertData(datas):
+    for i in range(0, len(datas)):
+        transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
+                                  fee=datas[i]['fee'], total=datas[i]['total'])
+        transaction.save()
+
 
 class KaspiParser:
     def __init__(self, file):
@@ -52,9 +59,11 @@ class KaspiParser:
                 'transfer': amount[i],
                 'fee': comision[i],
                 'total': total[i],
-                'bank': 'kaspi'
+                'bank': 'Kaspi'
             }
             datas.append(data)
+        # return datas
+        insertData(datas)
 
 
 
@@ -72,7 +81,7 @@ class NurbankParser:
         df.reset_index(drop=True, inplace=True)
 
         ids = df['Order ID']
-        dates = df['TrDate_Pr.k']
+        dates = df['TrDate_Pr.k'].dt.date
         amount = df['Tran_amoun']
         datas = []
 
@@ -86,15 +95,12 @@ class NurbankParser:
                 'fee':0
             }
             datas.append(data)
-
-
+        # return datas
 class KazkomParse:
     def __init__(self, file):
         self.file = file
     def getParse(self):
-        attachment_dir = '/home/mrx/PycharmProjects/untitled1/docs/'
-        file = '13318-EC27_12_12_merchantrep_17.04.2018-17.04.2018.htm'
-        url = attachment_dir + file
+        url = attachment_dir + self.file
         page = codecs.open(url, "r", "utf-8")
         soup = BeautifulSoup(page.read(), "html.parser")
         t = soup.find('table', class_='main-table')
@@ -111,7 +117,7 @@ class KazkomParse:
                 'bank':'Kazkom'
             }
             datas.append(data)
-
+        return  datas
 
 class ToursimParser:
     def __init__(self, file):
@@ -144,9 +150,7 @@ class ToursimParser:
                 'bank': 'Tourism'
             }
             datas.append(data)
-
-        
-
+        return  datas
 #design
 #4 excel forms
 #json reader

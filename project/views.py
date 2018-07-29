@@ -39,9 +39,13 @@ class ParseForm(TemplateView):
         submitbutton = request.POST.get('submit')
         if(submitbutton == 'Search'):
             for i in range(0, len(names)):
-                p  = Parser(names[i])
-                files = p.getFilenames()
-                x = Payment(names[i], files)
+                files = []
+                th  = Parser(names[i], files)
+                th.start()
+                th.join()
+                file = th.file
+                # files = p.getFiles()
+                x = Payment(names[i], file)
                 simplelist.append(x)
 
 
@@ -55,11 +59,19 @@ class ParseForm(TemplateView):
 
             for i in range(0, len(simplelist)):
                 files = simplelist[i].getFiles()
+                name = simplelist[i].getName()
                 for j in files:
-                    if names[i] == 'kaspi':
+                    if name == 'kaspi':
                         kaspi = KaspiParser(j)
+
+                        kaspi.getParse()
                     if names[i] == 'nurbank':
                         nurbank = NurbankParser(j)
+                    if names[i] == 'tourism':
+                        tourism = ToursimParser(j)
+                    if names[i] == 'kazkom':
+                        kazkom = KaspiParser(j)
+
 
         return redirect('/transaction')
 

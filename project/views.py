@@ -5,7 +5,8 @@ from .models import Transaction
 from project.forms import UpdateForm
 from project.GmailParser import Parser
 from project.models import Payment,KaspiParser,NurbankParser,KazkomParse,ToursimParser
-
+import logging
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 class FormView(TemplateView):
@@ -31,48 +32,64 @@ names = ['kaspi', 'nurbank', 'tourism', 'kazkom']
 
 class ParseForm(TemplateView):
     template_name = 'project/update_list.html'
+
+    simplelist = []
+    for i in range(0, len(names)):
+            files = []
+            th = Parser(names[i], files)
+            th.start()
+            th.join()
+            file = th.file
+            x = Payment(names[i], file)
+            simplelist.append(x)
+
     def get(self, request):
         return render(request, self.template_name, {})
     def post(self,request):
         #getFilenames---------------
-        simplelist = []
+        # simplelist = []
         submitbutton = request.POST.get('submit')
         if(submitbutton == 'Search'):
-            for i in range(0, len(names)):
-                files = []
-                th  = Parser(names[i], files)
-                th.start()
-                th.join()
-                file = th.file
-                # files = p.getFiles()
-                x = Payment(names[i], file)
-                simplelist.append(x)
-
-
+        #     for i in range(0, len(names)):
+        #         files = []
+        #         th  = Parser(names[i], files)
+        #         th.start()
+        #         th.join()
+        #         file = th.file
+        #         # files = p.getFiles()
+        #         x = Payment(names[i], file)
+        #         simplelist.append(x)
+        #
             newFiles = False
+            simplelist = self.simplelist
             if len(simplelist) > 0 :
                 newFiles = True
-            args = {'bank': simplelist[0].getName(), 'files': simplelist[0].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
-
+            args = {'bank': simplelist[1].getName(), 'files': simplelist[1].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
             return render(request, 'project/update_list.html', args)
-        else :
 
+        if submitbutton == "Parse":
+            simplelist = self.simplelist
+            f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
+            f.write(str(len(simplelist)))
+            logger.debug(len(simplelist))
             for i in range(0, len(simplelist)):
                 files = simplelist[i].getFiles()
                 name = simplelist[i].getName()
                 for j in files:
                     if name == 'kaspi':
                         kaspi = KaspiParser(j)
-
                         kaspi.getParse()
                     if names[i] == 'nurbank':
                         nurbank = NurbankParser(j)
+                        nurbank.getParse()
                     if names[i] == 'tourism':
                         tourism = ToursimParser(j)
+                        tourism.getParse()
                     if names[i] == 'kazkom':
                         kazkom = KaspiParser(j)
+                        kazkom.getParse()
 
-
+        # return render(request, 'project/update_list.html', {})
         return redirect('/transaction')
 
 def update_list(request):

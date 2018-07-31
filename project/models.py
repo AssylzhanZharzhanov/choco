@@ -43,7 +43,7 @@ def insertData(datas):
                                   fee=datas[i]['fee'], total=datas[i]['total'])
             transaction.save()
 
-        #else comparing by datas and total sum
+        #else comparing by dates and total sum
 
 
 class KaspiParser:

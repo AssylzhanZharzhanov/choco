@@ -1,3 +1,5 @@
+import datetime
+import json
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from project.forms import PostForm
@@ -7,6 +9,7 @@ from project.GmailParser import Parser
 from project.models import Payment,KaspiParser,NurbankParser,KazkomParser,ToursimParser
 import logging
 logger = logging.getLogger(__name__)
+
 # Create your views here.
 
 class FormView(TemplateView):
@@ -20,10 +23,12 @@ class FormView(TemplateView):
         form = PostForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
-            transactions = Transaction.objects.filter(name__contains=name)
-            # tr = Transaction.objects.filter(id=4)
-            # return redirect('/transaction')
-            #check isequal or not
+            # start = form.cleaned_data['start_date']
+            # end = form.cleaned_data['end_date']
+            start = datetime.date(2018,3,20)
+            end = datetime.date(2018,5,20)
+            transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
+            # by dates
             args = {'form':form, 'transactions': transactions}
             return render(request, self.template_name, args)
 
@@ -39,7 +44,6 @@ class ParseForm(TemplateView):
             files = []
             th = Parser(names[i], files)
             th.start()
-            th.join()
             file = th.file
             x = Payment(names[i], file)
             simplelist.append(x)
@@ -48,19 +52,17 @@ class ParseForm(TemplateView):
         return render(request, self.template_name, {})
     def post(self,request):
         #getFilenames---------------
-        # simplelist = []
         submitbutton = request.POST.get('submit')
         if(submitbutton == 'Search'):
-        #     for i in range(0, len(names)):
-        #         files = []
-        #         th  = Parser(names[i], files)
-        #         th.start()
-        #         th.join()
-        #         file = th.file
-        #         # files = p.getFiles()
-        #         x = Payment(names[i], file)
-        #         simplelist.append(x)
-        #
+
+            #read JSON
+            filename = 'transactions.json'
+            myfile = open(filename, 'r', encoding='Latin-1')
+            with open('transactions.json') as json_data:
+                d = json.load(json_data)
+                # print(d)
+
+
             newFiles = False
             simplelist = self.simplelist
             if len(simplelist) > 0 :
@@ -94,7 +96,8 @@ class ParseForm(TemplateView):
 def update_list(request):
      return render(request, 'project/update_list.html', {})
 
-
+def index(request):
+    return render(request,'project/index.html', {})
 
 # return render(request, 'project/update_list.html', {})
 

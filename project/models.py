@@ -24,6 +24,26 @@ class Transaction(models.Model):
 # def insert(self):
 #     self.save()
 
+class Data:
+    def __init__(self, id, date, transfer, fee, total,bank):
+        self.id = id
+        self.date = date
+        self.transfer = transfer
+        self.fee = fee
+        self.total = total
+        self.bank = bank
+
+        def getArr(self):
+            data = {
+                'id': self.id,
+                'date':self.date,
+                'transfer': self.transfer,
+                'fee':self.fee,
+                'total': self.total,
+                'bank':self.bank
+            }
+            return data
+
 class Payment:
     def __init__(self, name, file):
         self.name = name
@@ -42,9 +62,7 @@ def insertData(datas):
             transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'])
             transaction.save()
-
-        #else comparing by dates and total sum
-
+        #else comparing by dates and total sum are they equal
 
 class KaspiParser:
     def __init__(self, file):
@@ -53,8 +71,8 @@ class KaspiParser:
     def getParse(self):
         df = pd.read_excel(self.filename)
         df = pd.DataFrame(df)
-        dates = df['Дата транзакции'].dt.date
-        ids = df['Номер Транзакции']
+        dates = df['Дата транзакции'].dt.date + datetime.timedelta(days=1)
+        ids = df['Номер бронирования']
         comision = df['Комиссия']   
         total = df['Итого к перечислению']
         amount  = df['Сумма']
@@ -73,8 +91,6 @@ class KaspiParser:
         # return datas
         insertData(datas)
 
-
-
 class NurbankParser:
     def __init__(self, file):
         self.filename = attachment_dir + file
@@ -89,7 +105,7 @@ class NurbankParser:
         df.reset_index(drop=True, inplace=True)
 
         ids = df['Order ID']
-        dates = df['TrDate_Pr.k'].dt.date
+        dates = df['TrDate_Pr.k'].dt.date + datetime.timedelta(days=1)
         amount = df['Tran_amoun']
         datas = []
 
@@ -99,12 +115,13 @@ class NurbankParser:
                 'date': dates[i],
                 'transfer': amount[i],
                 'total': amount[i],
-                'bank': 'Nurbank',
+                'bank': 'Processing',
                 'fee':0
             }
             datas.append(data)
         insertData(datas)
         # return datas
+
 class KazkomParser:
     def __init__(self, file):
         self.file = file
@@ -160,6 +177,3 @@ class ToursimParser:
             }
             datas.append(data)
         insertData(datas)
-#design
-#4 excel forms
-#json reader

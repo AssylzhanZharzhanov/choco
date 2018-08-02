@@ -1,5 +1,7 @@
 import datetime
 import json
+from dateutil import parser
+from collections import namedtuple
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from project.forms import PostForm
@@ -9,7 +11,7 @@ from project.GmailParser import Parser
 from project.models import Payment,KaspiParser,NurbankParser,KazkomParser,ToursimParser
 import logging
 logger = logging.getLogger(__name__)
-
+from project.models import Data
 # Create your views here.
 
 class FormView(TemplateView):
@@ -17,7 +19,7 @@ class FormView(TemplateView):
 
     def get(self, request):
         form = PostForm()
-        return render(request, self.template_name, {'form' : form})
+        return render(request, self.template_name, {'form':form})
 
     def post(self,request):
         form = PostForm(request.POST)
@@ -25,16 +27,43 @@ class FormView(TemplateView):
             name = form.cleaned_data['name']
             # start = form.cleaned_data['start_date']
             # end = form.cleaned_data['end_date']
-            start = datetime.date(2018,3,20)
-            end = datetime.date(2018,5,20)
+            start = datetime.date(2018,7,20)
+            end = datetime.date(2018,8,20)
             transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
-            # by dates
-            args = {'form':form, 'transactions': transactions}
+                # by dates
+            filename = '/home/mrx/Documents/choko-master/docs/api.json'
+            myfile = open(filename, 'r', encoding='Latin-1')
+            json_data = json.load(myfile)
+
+            equal = []
+            notequal = []
+
+            for data in json_data:
+                if data['payment_code'] == name.upper():
+                    tr = Transaction.objects.filter(id = data['order_id'])
+                    if len(tr) > 0:
+                        for i in tr:
+                            if i.transfer == data['payment_amount']:
+                                a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                                b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                equal.append(a)
+                                equal.append(b)
+                            else:
+                                a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                                b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                notequal.append(a)
+                                notequal.append(b)
+            #
+            # for i in equal:
+            #     print(i.)
+            # args = {'form':form, 'transactions': transactions, 'name':name}
+            args = {'form':form, 'equal': equal, 'notEqual':notequal}
             return render(request, self.template_name, args)
 
-
 ids = [1,2,3,4]
-names = ['kaspi', 'nurbank', 'tourism', 'kazkom']
+names = ['kaspi', 'processing', 'tourism', 'kazkom']
 
 class ParseForm(TemplateView):
     template_name = 'project/update_list.html'
@@ -54,27 +83,15 @@ class ParseForm(TemplateView):
         #getFilenames---------------
         submitbutton = request.POST.get('submit')
         if(submitbutton == 'Search'):
-
-            #read JSON
-            filename = 'transactions.json'
-            myfile = open(filename, 'r', encoding='Latin-1')
-            with open('transactions.json') as json_data:
-                d = json.load(json_data)
-                # print(d)
-
-
             newFiles = False
             simplelist = self.simplelist
             if len(simplelist) > 0 :
                 newFiles = True
-            args = {'bank': simplelist[3].getName(), 'files': simplelist[3].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
+            args = {'bank': simplelist[0].getName(), 'files': simplelist[0].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
             return render(request, 'project/update_list.html', args)
 
         if submitbutton == "Parse":
             simplelist = self.simplelist
-            # f = open("/home/mrx/Documents/choko-master/docs/demofile.txt", "w")
-            # f.write(str(len(simplelist)))
-            # logger.debug(len(simplelist))
             for i in range(0, len(simplelist)):
                 files = simplelist[i].getFiles()
                 name = simplelist[i].getName()
@@ -82,7 +99,7 @@ class ParseForm(TemplateView):
                     if name == 'kaspi':
                         kaspi = KaspiParser(j)
                         kaspi.getParse()
-                    if names[i] == 'nurbank':
+                    if names[i] == 'processing':
                         nurbank = NurbankParser(j)
                         nurbank.getParse()
                     if names[i] == 'tourism':

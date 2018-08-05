@@ -8,82 +8,190 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
 <style>
+    body, html {
+        font-size: 12px;
+    }
     table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
     }
     td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
     }
-    tr:nth-child(even) {
+    {% comment %}tr:nth-child(even) {
     background-color: #dddddd;
+    }{% endcomment %}
+    h1{
+        font-size: 2rem;
     }
+    h5 {
+        font-weight: bold;
+    }
+
+    .notequal-thead {
+        background-color: #ff7e22;
+
+    }
+    .notfound-thead {
+        background-color: red;
+
+    }
+    .equal-thead {
+        background-color: seagreen;
+
+    }
+    table th {
+        color: #fff;
+    }
+    .notequal-thead,.notequal,.equal {
+        margin:1rem 0;
+    }
+    table .total td {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
 </style>
 
 <body>
-    <p> Transaction List </p>
+    <p class="text-center"> </p>
 
     <div class="select2-container">
-        <form method='post'>
+        <form method='post' class="d-flex justify-content-center">
             {% csrf_token %}
-             {{ form.as_p }}
-{#            <input type="text" name="name">#}
-            <button type="submit">Submit</button>
+{#             {{ form.as_p }}#}
+            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date" style= 'width:200px'>
+            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date" style= 'width:200px'>
+            <select name ="name" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Kaspi">Kaspi</option>
+                        <option value ="Processing">Processing</option>
+                        <option value ="Tourism">Tourism</option>
+                        <option value ="Kazkom">Kazkom</option>
+            </select>
+            <button type="submit" class="btn btn-success ml-3 btn-1" name = "submit" value="search">Submit</button>
+            <button type="submit" class="btn btn-success ml-3 btn-1" name = "submit" value="update">Update</button>
         </form>
     </div>
-{#    <h1>{{ name }}</h1>#}
-    <div class = "notequal" >
-    <h5 style="align-content: center"> Not Equal Datas </h5>
-    <table>
-        <thead>
-        <th> ID </th>
-        <th> DATE </th>
-        <th> TRANSFER </th>
-        <th> FEE </th>
-        <th> TOTAL </th>
-        <th> BANK </th>
-        </thead>
-        {% for i in notequal %}
-        <tr>
-        <td> {{ i.id }}</td>
-        <td> {{ i.date }}</td>
-        <td> {{ i.transfer }}</td>
-        <td> {{ i.fee }}</td>
-        <td> {{ i.total }}</td>
-        <td> {{ i.bank }}</td>
-        </tr>
-        {%  endfor %}
-    </table>
+
+    <h1 class="text-center my-3"> {{ name }} Transactions</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class = "notequal" >
+                    <h5> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
+                    <table>
+                        <thead class="notequal-thead">
+                        <th> ID </th>
+                        <th> DATE </th>
+                        <th> TRANSFER </th>
+                        <th> FEE </th>
+                        <th> TOTAL </th>
+                        <th> BANK </th>
+                        </thead>
+                        {% for i in notequal %}
+                        <tr>
+                        <td> {{ i.id }}</td>
+                        <td> {{ i.date }}</td>
+                        <td> {{ i.transfer }}</td>
+                        <td> {{ i.fee }}</td>
+                        <td> {{ i.total }}</td>
+                        <td> {{ i.bank }}</td>
+                        </tr>
+                        {%  endfor %}
+                        <tr class="total">
+                            <td> TOTAL: </td>
+                            <td> {{ notequal_total.date }}</td>
+                            <td> {{ notequal_total.transfer }}</td>
+                            <td> {{ notequal_total.fee }}</td>
+                            <td> {{ notequal_total.total }}</td>
+                            <td> {{ notequal_total.bank }}</td>
+                        </tr>
+
+                    </table>
+                    </div>
+
+                <div class = "notfound"  style="padding-top: 35px">
+                <h5> Данные, которых нет в платежной системе </h5>
+                <table>
+                    <thead class="notfound-thead">
+                    <th> ID </th>
+                    <th> DATE </th>
+                    <th> TRANSFER </th>
+                    <th> FEE </th>
+                    <th> TOTAL </th>
+                    <th> BANK </th>
+                    </thead>
+                    {% for i in notfound %}
+                    <tr>
+                    <td> {{ i.id }}</td>
+                    <td> {{ i.date }}</td>
+                    <td> {{ i.transfer }}</td>
+                    <td> {{ i.fee }}</td>
+                    <td> {{ i.total }}</td>
+                    <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                </table>
+                </div>
+
+                <div class = "equal"  style="padding-top: 60px" >
+                <h5> Данные, которые одинаковы в платежной системе и компании  </h5>
+                <table>
+                    <thead class="equal-thead">
+                    <th> ID </th>
+                    <th> DATE </th>
+                    <th> TRANSFER </th>
+                    <th> FEE </th>
+                    <th> TOTAL </th>
+                    <th> BANK </th>
+                    </thead>
+                    {% for i in equal %}
+                    <tr>
+                    <td> {{ i.id }}</td>
+                    <td> {{ i.date }}</td>
+                    <td> {{ i.transfer }}</td>
+                    <td> {{ i.fee }}</td>
+                    <td> {{ i.total }}</td>
+                    <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                     <tr class="total">
+                        <td> TOTAL: </td>
+                        <td> {{ equal_total.date }}</td>
+                        <td> {{ equal_total.transfer }}</td>
+                        <td> {{ equal_total.fee }}</td>
+                        <td> {{ equal_total.total }}</td>
+                        <td> {{ equal_total.bank }}</td>
+                    </tr>
+                </table>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <div class = "equal" >
-    <h5 style="align-content: center"> Equal Datas </h5>
-    <table>
-        <thead>
-        <th> ID </th>
-        <th> DATE </th>
-        <th> TRANSFER </th>
-        <th> FEE </th>
-        <th> TOTAL </th>
-        <th> BANK </th>
-        </thead>
-        {% for i in equal %}
-        <tr>
-        <td> {{ i.id }}</td>
-        <td> {{ i.date }}</td>
-        <td> {{ i.transfer }}</td>
-        <td> {{ i.fee }}</td>
-        <td> {{ i.total }}</td>
-        <td> {{ i.bank }}</td>
-        </tr>
-        {%  endfor %}
-    </table>
-    </div>
-
-
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+    </script>
+    <script>
+        $(document).ready(function(){
+           $('.btn-1').click(function() {
+                var empty = false;
+                $.each($('.input-cal'),function() {
+                    if($(this).val() == '') {
+                       empty = true;
+                   }
+                });
+            return !empty;
+           });
+        });
+    </script>
 </body>
 
 </html>

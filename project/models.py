@@ -12,6 +12,7 @@ from dateutil import parser
 import re
 import codecs
 import pandas as pd
+import numpy as np
 
 class Transaction(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -101,15 +102,16 @@ class NurbankParser:
         colnames = df.iloc[2]
         df.columns = colnames
         df = df.drop(df.index[[0, 1, 2]])
-        df = df[df['RC_descrip'] == 'Approved or completed successfully']
+        # df = df[df['RC_descrip'] == 'Approved or completed successfully']
+        df['Tran_amoun'] = np.where(df['Resp'] == 'Decline', 0, df['Tran_amoun'])
         df.reset_index(drop=True, inplace=True)
 
         ids = df['Order ID']
-        dates = df['TrDate_Pr.k'].dt.date + datetime.timedelta(days=1)
+        dates = df['AlmDate'].dt.date
         amount = df['Tran_amoun']
         datas = []
 
-        for i in range(1, len(dates)):
+        for i in range(0, len(dates)):
             data = {
                 'id': ids[i],
                 'date': dates[i],
@@ -119,6 +121,7 @@ class NurbankParser:
                 'fee':0
             }
             datas.append(data)
+        print(df['Tran_amoun'])
         insertData(datas)
         # return datas
 
@@ -143,6 +146,7 @@ class KazkomParser:
                 'bank':'Kazkom'
             }
             datas.append(data)
+        # print(tr)
         insertData(datas)
 
 class ToursimParser:

@@ -13,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 from project.models import Data
 # Create your views here.
+# add time and compare
+# buttons
 
 class FormView(TemplateView):
     template_name = 'project/transaction_list.html'
@@ -22,45 +24,121 @@ class FormView(TemplateView):
         return render(request, self.template_name, {'form':form})
 
     def post(self,request):
-        form = PostForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            # start = form.cleaned_data['start_date']
-            # end = form.cleaned_data['end_date']
-            start = datetime.date(2018,7,20)
-            end = datetime.date(2018,8,20)
+        # form = PostForm(request.POST)
+        # if form.is_valid():
+            # name = form.cleaned_data['name']
+        submitbutton = request.POST.get("submit")
+        if (submitbutton == 'search'):
+            name = request.POST.get("name")
+            start = request.POST.get("start_date")
+            end = request.POST.get("end_date")
+                # start = form.cleaned_data['start_date']
+                # end = form.cleaned_data['end_date']
+                # start = datetime.date(2018,7,20)
+                # end = datetime.date(2018,8,20)
             transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
                 # by dates
             filename = '/home/mrx/Documents/choko-master/docs/api.json'
             myfile = open(filename, 'r', encoding='Latin-1')
             json_data = json.load(myfile)
+    #------------------------------------------------------------------------------------------------------------------------
 
             equal = []
             notequal = []
+            notfound = []
+
+            equal_total = Data(' ', ' ', 0, 0, 0, ' ')
+            notequal_total = Data(' ', ' ', 0, 0, 0, ' ')
 
             for data in json_data:
                 if data['payment_code'] == name.upper():
-                    tr = Transaction.objects.filter(id = data['order_id'])
+                    tr = Transaction.objects.filter(id = data['order_id'],date__range=[start, end])
                     if len(tr) > 0:
                         for i in tr:
                             if i.transfer == data['payment_amount']:
                                 a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
                                 b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                             data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
                                 equal.append(a)
                                 equal.append(b)
+                                equal_total.transfer = float(equal_total.transfer) + float(a.transfer)
+                                equal_total.fee = float(equal_total.fee) + float(a.fee)
+                                equal_total.total = float(equal_total.total) + float(a.total)
                             else:
                                 a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
                                 b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                             data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
                                 notequal.append(a)
                                 notequal.append(b)
-            #
-            # for i in equal:
-            #     print(i.)
-            # args = {'form':form, 'transactions': transactions, 'name':name}
-            args = {'form':form, 'equal': equal, 'notEqual':notequal}
-            return render(request, self.template_name, args)
+                                notequal_total.transfer = notequal_total.transfer + a.transfer
+                                notequal_total.fee = notequal_total.fee + a.fee
+                                notequal_total.total = notequal_total.total + a.total
+                        else:
+                            notfound.append(Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                             data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata'))
+
+                #-----------------------------------------------------------------------------------------------------------
+
+            ps_equal = []
+            ps_notequal = []
+            ps_notfound = []
+            ps_equal_total = Data(' ', ' ', 0, 0, 0, ' ')
+            ps_notequal_total =  Data(' ', ' ', 0, 0, 0, ' ')
+            for i in transactions:
+                for data in json_data:
+                        # compare date and time
+                    if(i.id == data['order_id']):
+                        if i.transfer == data['payment_amount']:
+                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                            ps_equal.append(a)
+                            ps_equal.append(b)
+                            ps_equal_total.transfer = ps_equal_total.transfer + a.transfer
+                            ps_equal_total.fee = ps_equal_total.fee + a.fee
+                            ps_equal_total.total = ps_equal_total.total + a.total
+                        else:
+                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                         data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                            ps_notequal.append(a)
+                            ps_notequal.append(b)
+                            ps_notequal_total.transfer = ps_notequal_total.transfer + a.transfer
+                            ps_notequal_total.fee = ps_notequal_total.fee + a.fee
+                            ps_notequal_total.total = ps_notequal_total.total + a.total
+                    else:
+                        ps_notfound.append(Data(i.id, i.date, i.transfer, i.fee, i.total, i.name))
+                #'form':form
+                args = {'name': name, 'equal': equal, 'notequal':notequal, 'notfound': notfound, 'equal_total':equal_total, 'notequal_total': notequal_total, 'ps_equal': ps_equal,'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total':ps_equal_total, 'ps_notequal_total':ps_notequal_total}
+                return render(request, self.template_name, args)
+        else:
+            simplelist = []
+            for i in range(0, len(names)):
+                files = []
+                th = Parser(names[i], files)
+                th.start()
+                file = th.file
+                x = Payment(names[i], file)
+                simplelist.append(x)
+
+            for i in range(0, len(simplelist)):
+                files = simplelist[i].getFiles()
+                name = simplelist[i].getName()
+                for j in files:
+                    if name == 'kaspi':
+                        kaspi = KaspiParser(j)
+                        kaspi.getParse()
+                    if names[i] == 'processing':
+                        nurbank = NurbankParser(j)
+                        nurbank.getParse()
+                    if names[i] == 'tourism':
+                        tourism = ToursimParser(j)
+                        tourism.getParse()
+                    if names[i] == 'kazkom':
+                        kazkom = KazkomParser(j)
+                        kazkom.getParse()
+                found = True
+                return render(request, self.template_name, { 'found':found })
 
 ids = [1,2,3,4]
 names = ['kaspi', 'processing', 'tourism', 'kazkom']
@@ -115,108 +193,3 @@ def update_list(request):
 
 def index(request):
     return render(request,'project/index.html', {})
-
-# return render(request, 'project/update_list.html', {})
-
-# [
-#  {
-#   "id" : 471688,
-#   "date_created" : 1532401037, дата в таймстамп
-#   "order_id" : 1153915,
-#   "payment_amount" : 41072.00000,
-#   "payment_type" : 1, тип оплаты(1-казком, 5 каспи, и тд. сейчас это не важно, точные ключи я вам позже скину)
-#   "payment_reference" : "820581779284",
-#   "status" : 1, (1-оплата, 2-возврат)
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471687,
-#   "date_created" : 1532400998,
-#   "order_id" : 1153959,
-#   "payment_amount" : 3918.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581779247",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471686,
-#   "date_created" : 1532400603,
-#   "order_id" : 1153950,
-#   "payment_amount" : 25708.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581778726",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471685,
-#   "date_created" : 1532400545,
-#   "order_id" : 1153949,
-#   "payment_amount" : 7836.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581778643",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471684,
-#   "date_created" : 1532400502,
-#   "order_id" : 1153901,
-#   "payment_amount" : 30252.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581778597",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471683,
-#   "date_created" : 1532400423,
-#   "order_id" : 1153939,
-#   "payment_amount" : 142.22000,
-#   "payment_type" : 5,
-#   "payment_reference" : "22482516447008",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471682,
-#   "date_created" : 1532400413,
-#   "order_id" : 1153939,
-#   "payment_amount" : 142.22000,
-#   "payment_type" : 5,
-#   "payment_reference" : "22482516447008",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471681,
-#   "date_created" : 1532400357,
-#   "order_id" : 1153927,
-#   "payment_amount" : -108867.00000,
-#   "payment_type" : 12,
-#   "payment_reference" : "",
-#   "status" : 2,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471680,
-#   "date_created" : 1532400188,
-#   "order_id" : 1153940,
-#   "payment_amount" : 48033.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581778206",
-#   "status" : 1,
-#   "succeed" : 1
-#  },
-#  {
-#   "id" : 471679,
-#   "date_created" : 1532400097,
-#   "order_id" : 1153933,
-#   "payment_amount" : 26308.00000,
-#   "payment_type" : 1,
-#   "payment_reference" : "820581778101",
-#   "status" : 1,
-#   "succeed" : 1
-#  }
-# ]

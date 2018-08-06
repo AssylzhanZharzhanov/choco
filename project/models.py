@@ -25,6 +25,7 @@ class Transaction(models.Model):
     company = models.CharField(max_length=200)
     updated = models.BooleanField()
     update_time = models.TimeField()
+    reference = models.IntegerField()
 
 # def insert(self):
 #     self.save()

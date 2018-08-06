@@ -36,9 +36,11 @@ logger = logging.getLogger(__name__)
 
 #-------------------------------------------Parsers--------------------------------------------------------
 class Data:
-    def __init__(self, id, date, transfer, fee, total,bank):
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank):
         self.id = id
         self.date = date
+        self.time=time
+        self.reference = reference
         self.transfer = transfer
         self.fee = fee
         self.total = total
@@ -48,7 +50,9 @@ class Data:
             data = {
                 'id': self.id,
                 'date':self.date,
+                'time': self.time,
                 'transfer': self.transfer,
+                'reference': self.reference,
                 'fee':self.fee,
                 'total': self.total,
                 'bank':self.bank
@@ -71,10 +75,11 @@ def insertData(datas):
         transactions = Transaction.objects.filter(id=datas[i]['id'])
         if(len(transactions) == 0):
             transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
-                                  fee=datas[i]['fee'], total=datas[i]['total'], updated=False, update_time=datas[i]['time'], company="Chocotravel/Aviata")
+                                  fee=datas[i]['fee'], total=datas[i]['total'], updated=False, update_time=datas[i]['time'], company="Chocotravel/Aviata",
+                                  reference=datas[i]['reference'])
             transaction.save()
         else:
-             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time:
+             if datas[i]['time'] >= transactions.get(date=datas[i]['date']).time:
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata")
                  # write to log if updated
             # print(transactions.get(date=datas[i]['date']).name)
@@ -90,6 +95,7 @@ class KaspiParser:
         df = pd.DataFrame(df)
         dates = df['Дата транзакции'].dt.date + datetime.timedelta(days=1)
         time = df['Дата транзакции'].dt.time
+        reference = df['Номер Транзакции']
         ids = df['Номер бронирования']
         comision = df['Комиссия']
         total = df['Итого к перечислению']
@@ -101,6 +107,7 @@ class KaspiParser:
                 'id': ids[i],
                 'date': dates[i],
                 'time': time[i],
+                'reference':reference,
                 'transfer': amount[i],
                 'fee': comision[i],
                 'total': total[i],
@@ -125,6 +132,7 @@ class NurbankParser:
 
         ids = df['Order ID']
         dates = df['AlmDate'].dt.date
+        reference = df['RRN(Pr.kz)']
         time = df['AlmDate'].dt.time
         amount = df['Tran_amoun']
         datas = []
@@ -134,6 +142,7 @@ class NurbankParser:
                 'id': ids[i],
                 'date': dates[i],
                 'time':time[i],
+                'reference' : reference,
                 'transfer': amount[i],
                 'total': amount[i],
                 'bank': 'Processing',
@@ -158,6 +167,7 @@ class KazkomParser:
                 'id': int(tr[i].find_all('td')[4].text),
                 'date': datetime.datetime.date(parser.parse(tr[i].find_all('td')[1].text)),
                 'time':datetime.datetime.time(parser.parse(tr[i].find_all('td')[1].text)),
+                'reference': int(tr[i].find_all('td')[7].text),
                 'transfer': float(tr[i].find_all('td')[8].text),
                 'fee': float(tr[i].find_all('td')[9].text),
                 'total': float(tr[i].find_all('td')[10].text),
@@ -179,20 +189,21 @@ class ToursimParser:
             col.append(cols[i])
         df.columns = col
         df = df.drop(df.index[[0]])
-        df = df[df['Описание результата'] == 'Успешное завершение']
+        # df = df[df['Описание результата'] == 'Успешное завершение']
         df.reset_index(drop=True, inplace=True)
 
         dates = df['Дата']
         time = df['Дата'].dt.time
         amount = df['Сумма платежа']
-        ids = df['# Кассовой операции']
-
+        ids = df['# Операции в биллинге']
+        reference = df['# Кассовой операции']
         datas = []
         for i in range(0, len(df.index)):
             data = {
                 'id': ids[i],
                 'date': dates[i],
                 'time': time[i],
+                'reference':reference,
                 'transfer': amount[i],
                 'total': amount[i],
                 'fee': 0,
@@ -243,8 +254,8 @@ class FormView(TemplateView):
                 notequal = []
                 notfound = []
 
-                equal_total = Data(' ', ' ', 0, 0, 0, ' ')
-                notequal_total = Data(' ', ' ', 0, 0, 0, ' ')
+                equal_total = Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
+                notequal_total = Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
 
                 for data in json_data:
                     if data['payment_code'] == name.upper():
@@ -252,18 +263,26 @@ class FormView(TemplateView):
                         if len(tr) > 0:
                             for i in tr:
                                 if i.transfer == data['payment_amount']:
-                                    a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
-                                    b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                                                 data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                    a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                                    b = Data(data[0]['order_id'],
+                                             datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                             datetime.datetime.time(parser.parse(data[0]['date_created'])),
+                                             data[0]['payment_reference'],
+                                             data[0]['payment_amount'], 0, data[0]['payment_amount'],
+                                             'Chocotravel/Aviata')
                                     equal.append(a)
                                     equal.append(b)
                                     equal_total.transfer = float(equal_total.transfer) + float(a.transfer)
                                     equal_total.fee = float(equal_total.fee) + float(a.fee)
                                     equal_total.total = float(equal_total.total) + float(a.total)
                                 else:
-                                    a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
-                                    b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                                                 data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
+                                    a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                                    b = Data(data[0]['order_id'],
+                                             datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                             datetime.datetime.time(parser.parse(data[0]['date_created'])),
+                                             data[0]['payment_reference'],
+                                             data[0]['payment_amount'], 0, data[0]['payment_amount'],
+                                             'Chocotravel/Aviata')
                                     notequal.append(a)
                                     notequal.append(b)
                                     notequal_total.transfer = notequal_total.transfer + a.transfer
@@ -280,26 +299,35 @@ class FormView(TemplateView):
                 ps_equal = []
                 ps_notequal = []
                 ps_notfound = []
-                ps_equal_total = Data(' ', ' ', 0, 0, 0, ' ')
-                ps_notequal_total =  Data(' ', ' ', 0, 0, 0, ' ')
+                ps_equal_total = Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
+                ps_notequal_total =  Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
                 transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
                 for i in transactions:
                     data = [x for x in json_data if x['order_id'] == i.id and x['payment_code'] == name.upper()]
                     if len(data) > 0:
                         if(data[0]['payment_amount'] == i.transfer):
-                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                             b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                     datetime.datetime.time(parser.parse(data[0]['date_created'])),data[0]['payment_reference'],
                                      data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
                             ps_equal.append(a)
                             ps_equal.append(b)
+                            ps_equal_total.transfer = ps_equal_total.transfer + a.transfer
+                            ps_equal_total.fee = ps_equal_total.fee + a.fee
+                            ps_equal_total.total = ps_equal_total.total + a.total
                         else:
-                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                             b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                     datetime.datetime.time(parser.parse(data[0]['date_created'])),
+                                     data[0]['payment_reference'],
                                      data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
                             ps_notequal.append(a)
                             ps_notequal.append(b)
+                            ps_notequal_total.transfer = ps_notequal_total.transfer + a.transfer
+                            ps_notequal_total.fee = ps_notequal_total.fee + a.fee
+                            ps_notequal_total.total = ps_notequal_total.total + a.total
                     else:
-                        ps_notfound.append(Data(i.id, i.date, i.transfer, i.fee, i.total, i.name))
+                        ps_notfound.append(Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name))
 
                 args = {'name': name, 'ps_equal': ps_equal,
                         'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total': ps_equal_total,
@@ -324,8 +352,8 @@ class FormView(TemplateView):
                     if names[i] == 'kazkom':
                         kazkom = KazkomParser(j)
                         kazkom.getParse()
-            found = True
-            return render(request, self.template_name, {})
+            direction = "ChocoToPayment"
+            return render(request, self.template_name, {'direction':direction})
 
 
 class ParseForm(TemplateView):
@@ -372,6 +400,7 @@ class ParseForm(TemplateView):
         #                 kazkom = KazkomParser(j)
         #                 kazkom.getParse()
         return redirect('/transaction')
+
 
 def update_list(request):
      return render(request, 'project/update_list.html', {})

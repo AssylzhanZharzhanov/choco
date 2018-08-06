@@ -54,13 +54,40 @@
         font-weight: bold;
         font-size: 1.2rem;
     }
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+    }
 
+    li {
+        float: left;
+    }
+
+    li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    li a:hover {
+        background-color: #111;
+    }
 </style>
 
 <body>
+<ul>
+  <li><a class="active" href="/transaction">Home</a></li>
+  <li><a href="/history">History</a></li>
+</ul>
+
     <p class="text-center"> </p>
 
-    <div class="select2-container">
+    <div class="select2-container" style="padding-top:15px;">
         <form method='post' class="d-flex justify-content-center">
             {% csrf_token %}
 {#             {{ form.as_p }}#}
@@ -96,7 +123,7 @@
         }
         </script>
     {% endif %}
-
+    {% if direction == "ChocoToPayment" %}
     <h1 class="text-center my-3"> {{ name }} Transactions</h1>
     <div class="container">
         <div class="row">
@@ -193,12 +220,113 @@
             </div>
         </div>
     </div>
+    {% endif %}
+
+    {% if direction == "PaymentToChoco" %}
+        <h1 class="text-center my-3"> {{ name }} Transactions</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class = "notequal" >
+                    <h5> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
+                    <table>
+                        <thead class="notequal-thead">
+                        <th> ID </th>
+                        <th> DATE </th>
+                        <th> TRANSFER </th>
+                        <th> FEE </th>
+                        <th> TOTAL </th>
+                        <th> BANK </th>
+                        </thead>
+                        {% for i in ps_notequal %}
+                        <tr>
+                        <td> {{ i.id }}</td>
+                        <td> {{ i.date }}</td>
+                        <td> {{ i.transfer }}</td>
+                        <td> {{ i.fee }}</td>
+                        <td> {{ i.total }}</td>
+                        <td> {{ i.bank }}</td>
+                        </tr>
+                        {%  endfor %}
+                        <tr class="total">
+                            <td> TOTAL: </td>
+                            <td> {{ notequal_total.date }}</td>
+                            <td> {{ notequal_total.transfer }}</td>
+                            <td> {{ notequal_total.fee }}</td>
+                            <td> {{ notequal_total.total }}</td>
+                            <td> {{ notequal_total.bank }}</td>
+                        </tr>
+
+                    </table>
+                    </div>
+
+                <div class = "notfound"  style="padding-top: 35px">
+                <h5> Данные, которых нет в платежной системе </h5>
+                <table>
+                    <thead class="notfound-thead">
+                    <th> ID </th>
+                    <th> DATE </th>
+                    <th> TRANSFER </th>
+                    <th> FEE </th>
+                    <th> TOTAL </th>
+                    <th> BANK </th>
+                    </thead>
+                    {% for i in ps_notfound %}
+                    <tr>
+                    <td> {{ i.id }}</td>
+                    <td> {{ i.date }}</td>
+                    <td> {{ i.transfer }}</td>
+                    <td> {{ i.fee }}</td>
+                    <td> {{ i.total }}</td>
+                    <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                </table>
+                </div>
+
+                <div class = "equal"  style="padding-top: 60px" >
+                <h5> Данные, которые одинаковы в платежной системе и компании  </h5>
+                <table>
+                    <thead class="equal-thead">
+                    <th> ID </th>
+                    <th> DATE </th>
+                    <th> TRANSFER </th>
+                    <th> FEE </th>
+                    <th> TOTAL </th>
+                    <th> BANK </th>
+                    </thead>
+                    {% for i in ps_equal %}
+                    <tr>
+                    <td> {{ i.id }}</td>
+                    <td> {{ i.date }}</td>
+                    <td> {{ i.transfer }}</td>
+                    <td> {{ i.fee }}</td>
+                    <td> {{ i.total }}</td>
+                    <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                     <tr class="total">
+                        <td> TOTAL: </td>
+                        <td> {{ equal_total.date }}</td>
+                        <td> {{ equal_total.transfer }}</td>
+                        <td> {{ equal_total.fee }}</td>
+                        <td> {{ equal_total.total }}</td>
+                        <td> {{ equal_total.bank }}</td>
+                    </tr>
+                </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous">
     </script>
+
     <script>
         $(document).ready(function(){
            $('.btn-1').click(function() {

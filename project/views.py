@@ -2,8 +2,6 @@ import datetime
 import json
 from dateutil import parser
 from collections import namedtuple
-
-# from django.core.mail.backends import console
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from project.forms import PostForm
@@ -12,7 +10,6 @@ from project.forms import UpdateForm
 from project.GmailParser import Parser
 import datetime
 import os
-# from dateutil.parser import parser
 from django.db import models
 from django.utils import timezone
 from django.utils import dates
@@ -29,16 +26,15 @@ import numpy as np
 import logging
 logger = logging.getLogger(__name__)
 # from project.models import Data
-# import win32api?/
-
-# Create your views here.
 
 # user registration
-# time
-# add time and compare
-# buttons
+# time done
+# add time and compare done
+# buttons done
 # logs
+# filters
 
+#-------------------------------------------Parsers--------------------------------------------------------
 class Data:
     def __init__(self, id, date, transfer, fee, total,bank):
         self.id = id
@@ -78,9 +74,12 @@ def insertData(datas):
                                   fee=datas[i]['fee'], total=datas[i]['total'], updated=False, update_time=datas[i]['time'], company="Chocotravel/Aviata")
             transaction.save()
         else:
-             # if datas[i]['time']
-            print(transactions.get(date=datas[i]['date']).name)
+             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time:
+                 Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata")
+                 # write to log if updated
+            # print(transactions.get(date=datas[i]['date']).name)
         #else comparing by dates and total sum are they equal
+        #add company
 
 class KaspiParser:
     def __init__(self, file):
@@ -222,26 +221,22 @@ class FormView(TemplateView):
 
     def get(self, request):
         form = PostForm()
-        return render(request, self.template_name, {'form':form})
+        direction = "ChocoToPayment"
+        return render(request, self.template_name, {'form':form, 'direction':direction})
 
     def post(self,request):
-        # form = PostForm(request.POST)
-        # if form.is_valid():
-            # name = form.cleaned_data['name']
         submitbutton = request.POST.get("submit")
+
+        name = request.POST.get("name")
+        start = request.POST.get("start_date")
+        end = request.POST.get("end_date")
+        direction = request.POST.get("direction")
+        filename = '/home/mrx/Documents/choko-master/docs/api.json'
+        myfile = open(filename, 'r', encoding='Latin-1')
+        json_data = json.load(myfile)
+
+
         if (submitbutton == 'search'):
-            name = request.POST.get("name")
-            start = request.POST.get("start_date")
-            end = request.POST.get("end_date")
-            direction = request.POST.get("direction")
-                # start = form.cleaned_data['start_date']
-                # end = form.cleaned_data['end_date']
-                # start = datetime.date(2018,7,20)
-                # end = datetime.date(2018,8,20)
-                # by dates
-            filename = '/home/mrx/Documents/choko-master/docs/api.json'
-            myfile = open(filename, 'r', encoding='Latin-1')
-            json_data = json.load(myfile)
     #------------------------------------------------------------------------------------------------------------------------
             if direction == "ChocoToPayment":
                 equal = []
@@ -278,7 +273,7 @@ class FormView(TemplateView):
                             notfound.append(Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
                                                  data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata'))
                 args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
-                        'equal_total': equal_total, 'notequal_total': notequal_total}
+                        'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction}
                 return render(request, self.template_name, args)
     #-----------------------------------------------------------------------------------------------------------
             else:
@@ -287,42 +282,30 @@ class FormView(TemplateView):
                 ps_notfound = []
                 ps_equal_total = Data(' ', ' ', 0, 0, 0, ' ')
                 ps_notequal_total =  Data(' ', ' ', 0, 0, 0, ' ')
-
                 transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
                 for i in transactions:
-                    # for data in json_data:
-                    output_dict = [x for x in json_data if x['order_id'] == i.id and x['payment_code'] == name.upper()]
-                    data = json.dumps(output_dict)
-                    # print(data[0]['payment_amount'])
-                    # if(len(data) > 0):
-                    #         # print("id compared")
-                    #     if i.transfer == data['payment_amount']:
-                    #         print("payment compared")
-                    #         a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
-                    #         b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                    #                      data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
-                    #         ps_equal.append(a)
-                    #         ps_equal.append(b)
-                    #         ps_equal_total.transfer = ps_equal_total.transfer + a.transfer
-                    #         ps_equal_total.fee = ps_equal_total.fee + a.fee
-                    #         ps_equal_total.total = ps_equal_total.total + a.total
-                    #     else:
-                    #         a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
-                    #         b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                    #                          data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata')
-                    #         ps_notequal.append(a)
-                    #         ps_notequal.append(b)
-                    #         ps_notequal_total.transfer = ps_notequal_total.transfer + a.transfer
-                    #         ps_notequal_total.fee = ps_notequal_total.fee + a.fee
-                    #         ps_notequal_total.total = ps_notequal_total.total + a.total
-                    # else:
-                    #         ps_notfound.append(Data(i.id, i.date, i.transfer, i.fee, i.total, i.name))
-
+                    data = [x for x in json_data if x['order_id'] == i.id and x['payment_code'] == name.upper()]
+                    if len(data) > 0:
+                        if(data[0]['payment_amount'] == i.transfer):
+                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                     data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
+                            ps_equal.append(a)
+                            ps_equal.append(b)
+                        else:
+                            a = Data(i.id, i.date, i.transfer, i.fee, i.total, i.name)
+                            b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
+                                     data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
+                            ps_notequal.append(a)
+                            ps_notequal.append(b)
+                    else:
+                        ps_notfound.append(Data(i.id, i.date, i.transfer, i.fee, i.total, i.name))
 
                 args = {'name': name, 'ps_equal': ps_equal,
                         'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total': ps_equal_total,
-                        'ps_notequal_total': ps_notequal_total}
+                        'ps_notequal_total': ps_notequal_total, 'direction':direction}
                 return render(request, self.template_name, args)
+
         if submitbutton == 'update':
             simplelist = self.simplelist
             for i in range(0, len(simplelist)):
@@ -342,7 +325,6 @@ class FormView(TemplateView):
                         kazkom = KazkomParser(j)
                         kazkom.getParse()
             found = True
-
             return render(request, self.template_name, {})
 
 
@@ -396,3 +378,9 @@ def update_list(request):
 
 def index(request):
     return render(request,'project/index.html', {})
+
+class History(TemplateView):
+    template_name = 'project/History.html'
+
+    def get(self, request):
+        return render(request, self.template_name, {})

@@ -21,6 +21,7 @@ class Transaction(models.Model):
     transfer = models.IntegerField()
     fee = models.IntegerField()
     total = models.IntegerField()
+    # company = models.CharField(max_length=200)
 
 # def insert(self):
 #     self.save()
@@ -63,6 +64,7 @@ def insertData(datas):
             transaction = Transaction(id = datas[i]['id'], date = datas[i]['date'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'])
             transaction.save()
+
         #else comparing by dates and total sum are they equal
 
 class KaspiParser:
@@ -73,6 +75,7 @@ class KaspiParser:
         df = pd.read_excel(self.filename)
         df = pd.DataFrame(df)
         dates = df['Дата транзакции'].dt.date + datetime.timedelta(days=1)
+        time = df['Дата транзакции'].dt.time
         ids = df['Номер бронирования']
         comision = df['Комиссия']   
         total = df['Итого к перечислению']
@@ -83,6 +86,7 @@ class KaspiParser:
             data = {
                 'id': ids[i],
                 'date': dates[i],
+                'time': time[i],
                 'transfer': amount[i],
                 'fee': comision[i],
                 'total': total[i],
@@ -108,6 +112,7 @@ class NurbankParser:
 
         ids = df['Order ID']
         dates = df['AlmDate'].dt.date
+        time = df['AlmDate'].dt.time
         amount = df['Tran_amoun']
         datas = []
 
@@ -115,13 +120,13 @@ class NurbankParser:
             data = {
                 'id': ids[i],
                 'date': dates[i],
+                'time':time[i],
                 'transfer': amount[i],
                 'total': amount[i],
                 'bank': 'Processing',
                 'fee':0
             }
             datas.append(data)
-        print(df['Tran_amoun'])
         insertData(datas)
         # return datas
 
@@ -140,6 +145,7 @@ class KazkomParser:
             data = {
                 'id': int(tr[i].find_all('td')[4].text),
                 'date': datetime.datetime.date(parser.parse(tr[i].find_all('td')[1].text)),
+                'time':datetime.datetime.time(parser.parse(tr[i].find_all('td')[1].text)),
                 'transfer': float(tr[i].find_all('td')[8].text),
                 'fee': float(tr[i].find_all('td')[9].text),
                 'total': float(tr[i].find_all('td')[10].text),
@@ -168,7 +174,8 @@ class ToursimParser:
         dates = df['Дата']
         amount = df['Сумма платежа']
         ids = df['# Кассовой операции']
-
+        for i in dates:
+            print(i)
         datas = []
         for i in range(0, len(df.index)):
             data = {

@@ -72,10 +72,26 @@
                         <option value ="Tourism">Tourism</option>
                         <option value ="Kazkom">Kazkom</option>
             </select>
+            <select name ="company" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Kaspi">Chocotravel/Aviata</option>
+                        <option value ="Processing">Chocolife</option>
+                        <option value ="Tourism">Rahmet</option>
+                        <option value ="Kazkom">Chocofood</option>
+            </select>
             <button type="submit" class="btn btn-success ml-3 btn-1" name = "submit" value="search">Submit</button>
-            <button type="submit" class="btn btn-success ml-3 btn-1" name = "submit" value="update">Update</button>
+            <button type="submit" class="btn btn-success ml-3 btn-2" name = "submit" value="update">Update</button>
         </form>
     </div>
+
+{#    compare and insert to table#}
+    {% if found == True%}
+
+        <script>
+        function myFunction() {
+            alert("Found new files");
+        }
+        </script>
+    {% endif %}
 
     <h1 class="text-center my-3"> {{ name }} Transactions</h1>
     <div class="container">
@@ -185,6 +201,7 @@
                 var empty = false;
                 $.each($('.input-cal'),function() {
                     if($(this).val() == '') {
+                        alert("Fill the date!!!")
                        empty = true;
                    }
                 });

@@ -17,6 +17,7 @@ import numpy as np
 class Transaction(models.Model):
     id = models.IntegerField(primary_key=True)
     date = models.DateField()
+    time = models.TimeField()
     name = models.CharField(max_length=200)
     transfer = models.IntegerField()
     fee = models.IntegerField()
@@ -93,7 +94,6 @@ class KaspiParser:
                 'bank': 'Kaspi'
             }
             datas.append(data)
-        # return datas
         insertData(datas)
 
 class NurbankParser:
@@ -128,7 +128,6 @@ class NurbankParser:
             }
             datas.append(data)
         insertData(datas)
-        # return datas
 
 class KazkomParser:
     def __init__(self, file):
@@ -152,7 +151,6 @@ class KazkomParser:
                 'bank':'Kazkom'
             }
             datas.append(data)
-        # print(tr)
         insertData(datas)
 
 class ToursimParser:
@@ -172,15 +170,16 @@ class ToursimParser:
         df.reset_index(drop=True, inplace=True)
 
         dates = df['Дата']
+        time = df['Дата'].dt.time
         amount = df['Сумма платежа']
         ids = df['# Кассовой операции']
-        for i in dates:
-            print(i)
+
         datas = []
         for i in range(0, len(df.index)):
             data = {
                 'id': ids[i],
                 'date': dates[i],
+                'time':time[i],
                 'transfer': amount[i],
                 'total': amount[i],
                 'fee': 0,

@@ -37,7 +37,7 @@ class UpdatedTransaction(models.Model):
     fee = models.IntegerField()
     total = models.IntegerField()
     company = models.CharField(max_length=200)
-    updated = models.BooleanField()
+    # updated = models.BooleanField()
     update_time = models.TimeField()
     reference = models.CharField(max_length=200)
 

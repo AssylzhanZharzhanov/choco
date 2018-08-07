@@ -58,12 +58,37 @@
 <div class="container">
         <div class="row">
             <div class="col-md-10 mx-auto">
-{#                {% if found %}#}
-{##}
-{#                {% endif %}#}
-{##}
-{#                {% if !found %}#}
-{#                    <p> Ничего по данному  order_id не найдено </p>#}
+                {% if found %}
+                    <table>
+                        <thead class="notequal-thead">
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> UPDATED TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                        </thead>
+                        {% for i in list %}
+                        <tr>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.updated_time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                        </tr>
+                        {%  endfor %}
+
+                {% endif %}
+
+{#                {% if list %}#}
+{#                    <p> Ничего по данной информации не найдено </p>#}
 {#                {% endif %}#}
             </div>
         </div>

@@ -439,23 +439,69 @@ def update_list(request):
 def index(request):
     return render(request,'project/index.html', {})
 
+class UpdatedData:
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank, update_time):
+        self.id = id
+        self.date = date
+        self.time=time
+        self.reference = reference
+        self.transfer = transfer
+        self.fee = fee
+        self.total = total
+        self.bank = bank
+        self.update_time = update_time
+
+        def getArr(self):
+            data = {
+                'id': self.id,
+                'date':self.date,
+                'time': self.time,
+                'transfer': self.transfer,
+                'reference': self.reference,
+                'fee':self.fee,
+                'total': self.total,
+                'updated_time': self.update_time,
+                'bank':self.bank
+            }
+            return data
+
+
 class History(TemplateView):
     template_name = 'project/History.html'
 
 
     def get(self, request):
+        # found = False
         return render(request, self.template_name, {})
 
     def post(self, request):
         button = request.POST.get("find")
         id = request.POST.get('id')
+        reference = request.POST.get('reference')
+        found = False
+
         if button == "id":
             transactions = UpdatedTransaction.objects.filter(ids = id)
+            if transactions:
+                found = True
+            list = []
+            for i in transactions:
+                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+
+            return render(request, self.template_name, {'found': found, 'list': list})
 
         if button == "reference":
+            transactions = UpdatedTransaction.objects.filter(reference = reference)
+            if transactions:
+                found = True
+            list = []
+            for i in transactions:
+                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+
+            return render(request, self.template_name, {'found': found, 'list': list})
 
 
-        args = {}
+
+        args = {'found': found}
         return render(request, self.template_name, args)
-
 

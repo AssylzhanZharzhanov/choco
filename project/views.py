@@ -79,10 +79,16 @@ def insertData(datas):
                                   fee=datas[i]['fee'], total=datas[i]['total'], updated=False, update_time=datas[i]['time'], company="Chocotravel/Aviata",
                                   reference=datas[i]['reference'])
             transaction.save()
+            updated = UpdatedTransaction(ids=datas[i]['id'], date=datas[i]['date'], time=datas[i]['time'],
+                                         name=datas[i]['bank'], transfer=datas[i]['transfer'],
+                                         fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'],
+                                         company="Chocotravel/Aviata",
+                                         reference=datas[i]['reference'])
+            updated.save()
         else:
-             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time and datas[i]['date'] > transactions.get(date=datas[i]['date']).date :
+             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time and datas[i]['date'] >= transactions.get(date=datas[i]['date']).date :
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
-                 updated = UpdatedTransaction(id = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
+                 updated = UpdatedTransaction(ids = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'], company="Chocotravel/Aviata",
                                   reference=datas[i]['reference'])
                  updated.save()
@@ -267,14 +273,14 @@ class FormView(TemplateView):
                         if x['order_id'] == Fix[i].id and x['payment_reference'] == Fix[i].reference:
                             x['payment_amount'] = notFix[i].transfer
                             transactions = Transaction.objects.get(id = Fix[i].id, reference=Fix[i].reference)
-                            updateTransaction = UpdatedTransaction(id = transactions.id, date = transactions.date, time = transactions.time, name = transactions.name, transfer=transactions.transfer,
-                                  fee=transactions.fee, total=transactions.total, updated=False, update_time=datetime.datetime.time(datetime.datetime.now()), company="Chocotravel/Aviata",
+                            updateTransaction = UpdatedTransaction(ids = transactions.id, date = transactions.date, time = transactions.time, name = transactions.name, transfer=transactions.transfer,
+                                  fee=transactions.fee, total=transactions.total, update_time=datetime.datetime.time(datetime.datetime.now()), company="Chocotravel/Aviata",
                                   reference=transactions.reference)
                             updateTransaction.save()
                             #insert updated datas
 
             with open('/home/mrx/Documents/choko-master/docs/api.json', 'w') as outfile:
-                json.dump(json_data, outfile)
+                json.dump(json_data, outfile, indent=2)
                     #find a transfer by id and reference and fix it in json
 
             direction = "ChocoToPayment"
@@ -485,6 +491,17 @@ class History(TemplateView):
         reference = request.POST.get('reference')
         found = False
 
+        if button == "range":
+            start = request.POST.get("start_date")
+            end = request.POST.get("end_date")
+
+            transactions = UpdatedTransaction.objects.filter(date__range=[start, end])
+            list = []
+            for i in transactions:
+                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+
+            return render(request, self.template_name, {'found': found, 'list': list})
+
         if button == "id":
             transactions = UpdatedTransaction.objects.filter(ids = id)
             if transactions:
@@ -500,6 +517,7 @@ class History(TemplateView):
             if transactions:
                 found = True
             list = []
+            transactions = transactions.order_by('date', 'update_time', ' time')
             for i in transactions:
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
@@ -513,8 +531,5 @@ class History(TemplateView):
 class Analytics(TemplateView):
     template_name = 'project/Analytics.html'
 
-
     def get(self, request):
-
-
         return render(request, self.template_name, {})

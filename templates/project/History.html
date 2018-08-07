@@ -10,6 +10,48 @@
     body, html {
         font-size: 12px;
     }
+     table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+    }
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    }
+
+    h1{
+        font-size: 2rem;
+    }
+    h5 {
+        font-weight: bold;
+    }
+
+    .notequal-thead {
+        background-color: #ff7e22;
+
+    }
+    .notfound-thead {
+        background-color: red;
+
+    }
+    .equal-thead {
+        background-color: seagreen;
+
+    }
+    table th {
+        color: #fff;
+    }
+    .notequal-thead,.notequal,.equal {
+        margin:1rem 0;
+    }
+    table .total td {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
     ul {
         list-style-type: none;
         margin: 0;
@@ -37,21 +79,35 @@
     }
 </style>
 <body>
-<ul>
-  <li><a class="active" href="/transaction">Home</a></li>
-  <li><a href="/history">History</a></li>
-</ul>
+    <ul>
+        <li><a href="/transaction">Home</a></li>
+        <li><a href="/history">History</a></li>
+        <li><a href="/analytics">Analytics</a></li>
 
-<h1 class="text-center my-3"> History page </h1>
+    </ul>
+
+<h1 class="text-center my-3"> History of Updates  </h1>
 
     <div class="select2-container" style="padding-top:15px;">
         <form method='post' class="d-flex justify-content-center">
                         {% csrf_token %}
-            <input type="text" placeholder="Find by ID" name="id">
+            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date" style= 'width:200px'>
+            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date" style= 'width:200px'>
+            <button type="submit" class="btn btn-success ml-3 btn-3" name = "find" value="range">Find by range </button>
+
+            <input type="text" class = "id" placeholder="Find by ID" name="id">
             <button type="submit" class="btn btn-success ml-3 btn-1" name = "find" value="id">Find</button>
             <br>
-            <input type="text" placeholder="Find by reference" name="reference">
+            <input type="text" class = "reference" placeholder="Find by reference" name="reference">
             <button type="submit" class="btn btn-success ml-3 btn-2" name = "find" value="reference">Find</button>
+
+            <select name ="company" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Chocotravel">Chocotravel/Aviata</option>
+                        <option value ="Chocolife">Chocolife</option>
+                        <option value ="Rahmet">Rahmet</option>
+                        <option value ="Chocofood">Chocofood</option>
+                        <option value ="iDoctor">iDoctor</option>
+            </select>
         </form>
     </div>
 
@@ -93,6 +149,36 @@
             </div>
         </div>
 </div>
+
+ <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+    </script>
+
+    <script>
+        $(document).ready(function(){
+           $('.btn-1').click(function() {
+                var empty = false;
+                $.each($('.input-cal'),function() {
+                    if($(this).val() == '') {
+                        alert("Fill the date!!!")
+                       empty = true;
+                   }
+                });
+            return !empty;
+           });
+           $('.btn-1').click(function() {
+                var empty = false;
+                $.each($('.input-cal'),function() {
+                    if($(this).val() == '') {
+                        alert("Fill the date!!!")
+                       empty = true;
+                   }
+                });
+            return !empty;
+        });
+    </script>
 
 
 </body>

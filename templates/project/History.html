@@ -83,7 +83,11 @@
         <li><a href="/transaction">Home</a></li>
         <li><a href="/history">History</a></li>
         <li><a href="/analytics">Analytics</a></li>
-
+        {% if request.session.isAuth  %}
+            <li><a href = "/auth/logout/">Выйти ({{ request.session.user }})</a></li>
+        {% else %}
+            <li><a href = "/auth/login/">Войти</a></li>
+        {% endif %}
     </ul>
 
 <h1 class="text-center my-3"> History of Updates  </h1>

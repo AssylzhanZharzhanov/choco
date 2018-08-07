@@ -2,6 +2,8 @@ import datetime
 import json
 from dateutil import parser
 from collections import namedtuple
+
+from django.contrib import auth
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from project.forms import PostForm
@@ -245,7 +247,7 @@ class FormView(TemplateView):
     def get(self, request):
         form = PostForm()
         direction = "ChocoToPayment"
-        return render(request, self.template_name, {'form':form, 'direction':direction})
+        return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
     def post(self,request):
         submitbutton = request.POST.get("submit")
@@ -284,7 +286,7 @@ class FormView(TemplateView):
                     #find a transfer by id and reference and fix it in json
 
             direction = "ChocoToPayment"
-            return render(request, self.template_name, {'direction': direction})
+            return render(request, self.template_name, {'direction': direction, 'username': auth.get_user(request).username})
   # ------------------------------------------------------------------------------------------------------------------------
         if (submitbutton == 'search'):
            if direction == "ChocoToPayment":
@@ -332,7 +334,7 @@ class FormView(TemplateView):
                 global  fix_datas
                 fix_datas = notequal
                 args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
-                        'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction}
+                        'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction, 'username': auth.get_user(request).username}
                 return render(request, self.template_name, args)
     #-----------------------------------------------------------------------------------------------------------
            if direction == "PaymentToChoco":
@@ -372,7 +374,7 @@ class FormView(TemplateView):
 
                 args = {'name': name, 'ps_equal': ps_equal,
                         'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total': ps_equal_total,
-                        'ps_notequal_total': ps_notequal_total, 'direction':direction}
+                        'ps_notequal_total': ps_notequal_total, 'direction':direction, 'username': auth.get_user(request).username}
                 return render(request, self.template_name, args)
 
         if submitbutton == 'update':
@@ -500,7 +502,7 @@ class History(TemplateView):
             for i in transactions:
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
-            return render(request, self.template_name, {'found': found, 'list': list})
+            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
         if button == "id":
             transactions = UpdatedTransaction.objects.filter(ids = id)
@@ -510,7 +512,7 @@ class History(TemplateView):
             for i in transactions:
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
-            return render(request, self.template_name, {'found': found, 'list': list})
+            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
         if button == "reference":
             transactions = UpdatedTransaction.objects.filter(reference = reference)
@@ -521,7 +523,7 @@ class History(TemplateView):
             for i in transactions:
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
-            return render(request, self.template_name, {'found': found, 'list': list})
+            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
 
 

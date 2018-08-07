@@ -24,6 +24,7 @@ import pandas as pd
 import numpy as np
 # from project.models import Payment,KaspiParser,NurbankParser,KazkomParser,ToursimParser
 import logging
+from project.models import UpdatedTransaction
 logger = logging.getLogger(__name__)
 # from project.models import Data
 
@@ -79,8 +80,9 @@ def insertData(datas):
                                   reference=datas[i]['reference'])
             transaction.save()
         else:
-             if datas[i]['time'] >= transactions.get(date=datas[i]['date']).time:
-                 Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata")
+             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time:
+                 Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
+
                  # write to log if updated
             # print(transactions.get(date=datas[i]['date']).name)
         #else comparing by dates and total sum are they equal
@@ -107,7 +109,7 @@ class KaspiParser:
                 'id': ids[i],
                 'date': dates[i],
                 'time': time[i],
-                'reference':reference,
+                'reference':reference[i],
                 'transfer': amount[i],
                 'fee': comision[i],
                 'total': total[i],
@@ -142,7 +144,7 @@ class NurbankParser:
                 'id': ids[i],
                 'date': dates[i],
                 'time':time[i],
-                'reference' : reference,
+                'reference' : reference[i],
                 'transfer': amount[i],
                 'total': amount[i],
                 'bank': 'Processing',
@@ -167,7 +169,7 @@ class KazkomParser:
                 'id': int(tr[i].find_all('td')[4].text),
                 'date': datetime.datetime.date(parser.parse(tr[i].find_all('td')[1].text)),
                 'time':datetime.datetime.time(parser.parse(tr[i].find_all('td')[1].text)),
-                'reference': int(tr[i].find_all('td')[7].text),
+                'reference': tr[i].find_all('td')[7].text,
                 'transfer': float(tr[i].find_all('td')[8].text),
                 'fee': float(tr[i].find_all('td')[9].text),
                 'total': float(tr[i].find_all('td')[10].text),
@@ -192,18 +194,20 @@ class ToursimParser:
         # df = df[df['Описание результата'] == 'Успешное завершение']
         df.reset_index(drop=True, inplace=True)
 
-        dates = df['Дата']
-        time = df['Дата'].dt.time
+        dates = pd.to_datetime(df['Дата'],errors='coerce').dt.date
+        time = pd.to_datetime(df['Дата'],errors='coerce').dt.time
         amount = df['Сумма платежа']
+        df['# Операции в биллинге'] = np.where(df['# Операции в биллинге'].isna(), -1, df['# Операции в биллинге'])
+        # print(df['# Операции в биллинге'])
         ids = df['# Операции в биллинге']
         reference = df['# Кассовой операции']
         datas = []
-        for i in range(0, len(df.index)):
+        for i in range(0, len(ids)-1):
             data = {
                 'id': ids[i],
                 'date': dates[i],
                 'time': time[i],
-                'reference':reference,
+                'reference':reference[i],
                 'transfer': amount[i],
                 'total': amount[i],
                 'fee': 0,
@@ -237,7 +241,7 @@ class FormView(TemplateView):
 
     def post(self,request):
         submitbutton = request.POST.get("submit")
-
+        fixbutton = request.POST.get("fix")
         name = request.POST.get("name")
         start = request.POST.get("start_date")
         end = request.POST.get("end_date")
@@ -245,11 +249,34 @@ class FormView(TemplateView):
         filename = '/home/mrx/Documents/choko-master/docs/api.json'
         myfile = open(filename, 'r', encoding='Latin-1')
         json_data = json.load(myfile)
+        # fix_datas = request.POST.get("fix_datas")
+  #------------------------------------fix-------------------------------
+        if fixbutton == 'fix':
+            Fix = []
+            notFix = []
+            for i in range(0, len(fix_datas)):
+                if(i%2 == 0):
+                    notFix.append(fix_datas[i])
+                else :
+                    Fix.append(fix_datas[i])
 
+            for i in range(0, len(Fix)):
+                if(Fix[i].transfer != notFix[i].transfer):
+                    for x in json_data:
+                        if x['order_id'] == Fix[i].id and x['payment_reference'] == Fix[i].reference:
+                            x['payment_amount'] = notFix[i].transfer
 
+                            #insert updated datas
+
+            with open('/home/mrx/Documents/choko-master/docs/api.json', 'w') as outfile:
+                json.dump(json_data, outfile)
+                    #find a transfer by id and reference and fix it in json
+
+            direction = "ChocoToPayment"
+            return render(request, self.template_name, {'direction': direction})
+  # ------------------------------------------------------------------------------------------------------------------------
         if (submitbutton == 'search'):
-    #------------------------------------------------------------------------------------------------------------------------
-            if direction == "ChocoToPayment":
+           if direction == "ChocoToPayment":
                 equal = []
                 notequal = []
                 notfound = []
@@ -262,26 +289,25 @@ class FormView(TemplateView):
                         tr = Transaction.objects.filter(id = data['order_id'],date__range=[start, end])
                         if len(tr) > 0:
                             for i in tr:
-                                if i.transfer == data['payment_amount']:
+                                if i.transfer == data['payment_amount'] and i.reference == data['payment_reference']:
                                     a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
-                                    b = Data(data[0]['order_id'],
-                                             datetime.datetime.date(parser.parse(data[0]['date_created'])),
-                                             datetime.datetime.time(parser.parse(data[0]['date_created'])),
-                                             data[0]['payment_reference'],
-                                             data[0]['payment_amount'], 0, data[0]['payment_amount'],
+                                    b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                             datetime.datetime.time(parser.parse(data['date_created'])),
+                                             data['payment_reference'], data['payment_amount'], 0, data['payment_amount'],
                                              'Chocotravel/Aviata')
                                     equal.append(a)
                                     equal.append(b)
                                     equal_total.transfer = float(equal_total.transfer) + float(a.transfer)
                                     equal_total.fee = float(equal_total.fee) + float(a.fee)
                                     equal_total.total = float(equal_total.total) + float(a.total)
-                                else:
+                                elif i.transfer != data['payment_amount']  and i.reference == data['payment_reference']:
+
                                     a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
-                                    b = Data(data[0]['order_id'],
-                                             datetime.datetime.date(parser.parse(data[0]['date_created'])),
-                                             datetime.datetime.time(parser.parse(data[0]['date_created'])),
-                                             data[0]['payment_reference'],
-                                             data[0]['payment_amount'], 0, data[0]['payment_amount'],
+                                    b = Data(data['order_id'],
+                                             datetime.datetime.date(parser.parse(data['date_created'])),
+                                             datetime.datetime.time(parser.parse(data['date_created'])),
+                                             data['payment_reference'],
+                                             data['payment_amount'], 0, data['payment_amount'],
                                              'Chocotravel/Aviata')
                                     notequal.append(a)
                                     notequal.append(b)
@@ -290,22 +316,26 @@ class FormView(TemplateView):
                                     notequal_total.total = notequal_total.total + a.total
                         else:
                             notfound.append(Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                                 datetime.datetime.time(parser.parse(data['date_created'])), data['payment_reference'],
                                                  data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata'))
+                global  fix_datas
+                fix_datas = notequal
                 args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
                         'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction}
                 return render(request, self.template_name, args)
     #-----------------------------------------------------------------------------------------------------------
-            else:
+           if direction == "PaymentToChoco":
                 ps_equal = []
                 ps_notequal = []
                 ps_notfound = []
                 ps_equal_total = Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
                 ps_notequal_total =  Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
                 transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
+                # print(len(transactions))
                 for i in transactions:
                     data = [x for x in json_data if x['order_id'] == i.id and x['payment_code'] == name.upper()]
                     if len(data) > 0:
-                        if(data[0]['payment_amount'] == i.transfer):
+                        if(data[0]['payment_amount'] == i.transfer and  i.reference == data[0]['payment_reference']):
                             a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                             b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
                                      datetime.datetime.time(parser.parse(data[0]['date_created'])),data[0]['payment_reference'],
@@ -315,7 +345,7 @@ class FormView(TemplateView):
                             ps_equal_total.transfer = ps_equal_total.transfer + a.transfer
                             ps_equal_total.fee = ps_equal_total.fee + a.fee
                             ps_equal_total.total = ps_equal_total.total + a.total
-                        else:
+                        elif data[0]['payment_amount'] != i.transfer  and i.reference == data[0]['payment_reference']:
                             a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                             b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
                                      datetime.datetime.time(parser.parse(data[0]['date_created'])),
@@ -354,6 +384,7 @@ class FormView(TemplateView):
                         kazkom.getParse()
             direction = "ChocoToPayment"
             return render(request, self.template_name, {'direction':direction})
+
 
 
 class ParseForm(TemplateView):
@@ -411,5 +442,20 @@ def index(request):
 class History(TemplateView):
     template_name = 'project/History.html'
 
+
     def get(self, request):
         return render(request, self.template_name, {})
+
+    def post(self, request):
+        button = request.POST.get("find")
+        id = request.POST.get('id')
+        if button == "id":
+            transactions = UpdatedTransaction.objects.filter(ids = id)
+
+        if button == "reference":
+
+
+        args = {}
+        return render(request, self.template_name, args)
+
+

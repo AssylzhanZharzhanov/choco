@@ -25,7 +25,21 @@ class Transaction(models.Model):
     company = models.CharField(max_length=200)
     updated = models.BooleanField()
     update_time = models.TimeField()
-    reference = models.IntegerField()
+    reference = models.CharField(max_length=200)
+
+
+class UpdatedTransaction(models.Model):
+    ids = models.IntegerField()
+    date = models.DateField()
+    time = models.TimeField()
+    name = models.CharField(max_length=200)
+    transfer = models.IntegerField()
+    fee = models.IntegerField()
+    total = models.IntegerField()
+    company = models.CharField(max_length=200)
+    updated = models.BooleanField()
+    update_time = models.TimeField()
+    reference = models.CharField(max_length=200)
 
 # def insert(self):
 #     self.save()

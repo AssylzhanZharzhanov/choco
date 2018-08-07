@@ -22,9 +22,7 @@
     text-align: left;
     padding: 8px;
     }
-    {% comment %}tr:nth-child(even) {
-    background-color: #dddddd;
-    }{% endcomment %}
+
     h1{
         font-size: 2rem;
     }
@@ -134,54 +132,72 @@
                     <h5> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
                     <table>
                         <thead class="notequal-thead">
-                        <th> ID </th>
-                        <th> DATE </th>
-                        <th> TRANSFER </th>
-                        <th> FEE </th>
-                        <th> TOTAL </th>
-                        <th> BANK </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                         </thead>
                         {% for i in notequal %}
                         <tr>
-                        <td> {{ i.id }}</td>
-                        <td> {{ i.date }}</td>
-                        <td> {{ i.transfer }}</td>
-                        <td> {{ i.fee }}</td>
-                        <td> {{ i.total }}</td>
-                        <td> {{ i.bank }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                         </tr>
                         {%  endfor %}
                         <tr class="total">
                             <td> TOTAL: </td>
                             <td> {{ notequal_total.date }}</td>
+                            <td> {{ notequal.time  }}</td>
                             <td> {{ notequal_total.transfer }}</td>
                             <td> {{ notequal_total.fee }}</td>
                             <td> {{ notequal_total.total }}</td>
+                            <td> {{ noteual.reference }}</td>
                             <td> {{ notequal_total.bank }}</td>
                         </tr>
 
                     </table>
-                    </div>
+                    {%  if notequal %}
+                        <form method='post' >
+                                    {% csrf_token %}
+                            <input type="hidden" name="fix_datas" value={{ notequal }}>
+                            <button type="submit" class="btn btn-success ml-3 btn-2" name = "fix" style="float:right" value="fix">Fix datas</button>
+                        </form>
+                        {% endif %}
+
+                </div>
 
                 <div class = "notfound"  style="padding-top: 35px">
                 <h5> Данные, которых нет в платежной системе </h5>
                 <table>
                     <thead class="notfound-thead">
-                    <th> ID </th>
-                    <th> DATE </th>
-                    <th> TRANSFER </th>
-                    <th> FEE </th>
-                    <th> TOTAL </th>
-                    <th> BANK </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                     </thead>
                     {% for i in notfound %}
                     <tr>
-                    <td> {{ i.id }}</td>
-                    <td> {{ i.date }}</td>
-                    <td> {{ i.transfer }}</td>
-                    <td> {{ i.fee }}</td>
-                    <td> {{ i.total }}</td>
-                    <td> {{ i.bank }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                     </tr>
                     {%  endfor %}
                 </table>
@@ -191,29 +207,35 @@
                 <h5> Данные, которые одинаковы в платежной системе и компании  </h5>
                 <table>
                     <thead class="equal-thead">
-                    <th> ID </th>
-                    <th> DATE </th>
-                    <th> TRANSFER </th>
-                    <th> FEE </th>
-                    <th> TOTAL </th>
-                    <th> BANK </th>
+                        <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                     </thead>
                     {% for i in equal %}
                     <tr>
-                    <td> {{ i.id }}</td>
-                    <td> {{ i.date }}</td>
-                    <td> {{ i.transfer }}</td>
-                    <td> {{ i.fee }}</td>
-                    <td> {{ i.total }}</td>
-                    <td> {{ i.bank }}</td>
+                        <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                     </tr>
                     {%  endfor %}
                      <tr class="total">
                         <td> TOTAL: </td>
                         <td> {{ equal_total.date }}</td>
-                        <td> {{ equal_total.transfer }}</td>
+                         <td> {{ equal_total.time}}</td>
+                         <td> {{ equal_total.transfer }}</td>
                         <td> {{ equal_total.fee }}</td>
                         <td> {{ equal_total.total }}</td>
+                          <td> {{ equal_total.reference}}</td>
                         <td> {{ equal_total.bank }}</td>
                     </tr>
                 </table>
@@ -223,64 +245,74 @@
         </div>
     </div>
     {% endif %}
-
+{#----------------------------------------------------------------------------------------------------------------#}
     {% if direction == "PaymentToChoco" %}
         <h1 class="text-center my-3"> {{ name }} Transactions</h1>
     <div class="container">
         <div class="row">
             <div class="col-md-10 mx-auto">
                 <div class = "notequal" >
-                    <h5> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
+                    <h5> Данные, которые есть в компании но не одинаковы с платежной системой </h5>
                     <table>
                         <thead class="notequal-thead">
-                        <th> ID </th>
-                        <th> DATE </th>
-                        <th> TRANSFER </th>
-                        <th> FEE </th>
-                        <th> TOTAL </th>
-                        <th> BANK </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                         </thead>
                         {% for i in ps_notequal %}
                         <tr>
-                        <td> {{ i.id }}</td>
-                        <td> {{ i.date }}</td>
-                        <td> {{ i.transfer }}</td>
-                        <td> {{ i.fee }}</td>
-                        <td> {{ i.total }}</td>
-                        <td> {{ i.bank }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                         </tr>
                         {%  endfor %}
                         <tr class="total">
                             <td> TOTAL: </td>
-                            <td> {{ notequal_total.date }}</td>
-                            <td> {{ notequal_total.transfer }}</td>
-                            <td> {{ notequal_total.fee }}</td>
-                            <td> {{ notequal_total.total }}</td>
-                            <td> {{ notequal_total.bank }}</td>
+                            <td> {{ ps_notequal_total.date }}</td>
+                            <td> {{ ps_notequal_total.time }}</td>
+                            <td> {{ ps_notequal_total.transfer }}</td>
+                            <td> {{ ps_notequal_total.fee }}</td>
+                            <td> {{ ps_notequal_total.total }}</td>
+                            <td> {{ ps_notequal_total.reference }}</td>
+                            <td> {{ ps_notequal_total.bank }}</td>
                         </tr>
 
                     </table>
                     </div>
 
                 <div class = "notfound"  style="padding-top: 35px">
-                <h5> Данные, которых нет в платежной системе </h5>
+                <h5> Данные, которых нет у компании </h5>
                 <table>
                     <thead class="notfound-thead">
-                    <th> ID </th>
-                    <th> DATE </th>
-                    <th> TRANSFER </th>
-                    <th> FEE </th>
-                    <th> TOTAL </th>
-                    <th> BANK </th>
+                        <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                     </thead>
                     {% for i in ps_notfound %}
                     <tr>
-                    <td> {{ i.id }}</td>
-                    <td> {{ i.date }}</td>
-                    <td> {{ i.transfer }}</td>
-                    <td> {{ i.fee }}</td>
-                    <td> {{ i.total }}</td>
-                    <td> {{ i.bank }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                     </tr>
                     {%  endfor %}
                 </table>
@@ -290,30 +322,36 @@
                 <h5> Данные, которые одинаковы в платежной системе и компании  </h5>
                 <table>
                     <thead class="equal-thead">
-                    <th> ID </th>
-                    <th> DATE </th>
-                    <th> TRANSFER </th>
-                    <th> FEE </th>
-                    <th> TOTAL </th>
-                    <th> BANK </th>
+                        <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
                     </thead>
                     {% for i in ps_equal %}
                     <tr>
-                    <td> {{ i.id }}</td>
-                    <td> {{ i.date }}</td>
-                    <td> {{ i.transfer }}</td>
-                    <td> {{ i.fee }}</td>
-                    <td> {{ i.total }}</td>
-                    <td> {{ i.bank }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
                     </tr>
                     {%  endfor %}
                      <tr class="total">
                         <td> TOTAL: </td>
-                        <td> {{ equal_total.date }}</td>
-                        <td> {{ equal_total.transfer }}</td>
-                        <td> {{ equal_total.fee }}</td>
-                        <td> {{ equal_total.total }}</td>
-                        <td> {{ equal_total.bank }}</td>
+                        <td> {{ ps_equal_total.date }}</td>
+                         <td> {{ ps_equal_total.time }}</td>
+                         <td> {{ ps_equal_total.transfer }}</td>
+                         <td> {{ ps_equal_total.fee }}</td>
+                         <td> {{ ps_equal_total.total }}</td>
+                         <td> {{ ps_equal_total.reference }}</td>
+                         <td> {{ ps_equal_total.bank }}</td>
                     </tr>
                 </table>
                 </div>

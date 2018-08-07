@@ -80,9 +80,12 @@ def insertData(datas):
                                   reference=datas[i]['reference'])
             transaction.save()
         else:
-             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time:
+             if datas[i]['time'] > transactions.get(date=datas[i]['date']).time and datas[i]['date'] > transactions.get(date=datas[i]['date']).date :
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
-
+                 updated = UpdatedTransaction(id = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
+                                  fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'], company="Chocotravel/Aviata",
+                                  reference=datas[i]['reference'])
+                 updated.save()
                  # write to log if updated
             # print(transactions.get(date=datas[i]['date']).name)
         #else comparing by dates and total sum are they equal
@@ -225,7 +228,6 @@ class FormView(TemplateView):
     template_name = 'project/transaction_list.html'
 
     simplelist = []
-    # console.show_activity('Checking for update...')
     for i in range(0, len(names)):
         files = []
         th = Parser(names[i], files)
@@ -249,7 +251,6 @@ class FormView(TemplateView):
         filename = '/home/mrx/Documents/choko-master/docs/api.json'
         myfile = open(filename, 'r', encoding='Latin-1')
         json_data = json.load(myfile)
-        # fix_datas = request.POST.get("fix_datas")
   #------------------------------------fix-------------------------------
         if fixbutton == 'fix':
             Fix = []
@@ -265,7 +266,11 @@ class FormView(TemplateView):
                     for x in json_data:
                         if x['order_id'] == Fix[i].id and x['payment_reference'] == Fix[i].reference:
                             x['payment_amount'] = notFix[i].transfer
-
+                            transactions = Transaction.objects.get(id = Fix[i].id, reference=Fix[i].reference)
+                            updateTransaction = UpdatedTransaction(id = transactions.id, date = transactions.date, time = transactions.time, name = transactions.name, transfer=transactions.transfer,
+                                  fee=transactions.fee, total=transactions.total, updated=False, update_time=datetime.datetime.time(datetime.datetime.now()), company="Chocotravel/Aviata",
+                                  reference=transactions.reference)
+                            updateTransaction.save()
                             #insert updated datas
 
             with open('/home/mrx/Documents/choko-master/docs/api.json', 'w') as outfile:
@@ -505,3 +510,11 @@ class History(TemplateView):
         args = {'found': found}
         return render(request, self.template_name, args)
 
+class Analytics(TemplateView):
+    template_name = 'project/Analytics.html'
+
+
+    def get(self, request):
+
+
+        return render(request, self.template_name, {})

@@ -498,10 +498,13 @@ class History(TemplateView):
             end = request.POST.get("end_date")
 
             transactions = UpdatedTransaction.objects.filter(date__range=[start, end])
+            if transactions:
+                found = True
             list = []
             for i in transactions:
-                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
-
+                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+            for i in list:
+                print(i.id)
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
         if button == "id":

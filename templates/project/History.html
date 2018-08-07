@@ -136,7 +136,7 @@
                             <td> {{ i.id }}</td>
                             <td> {{ i.date }}</td>
                             <td> {{ i.time }}</td>
-                            <td> {{ i.updated_time }}</td>
+                            <td> {{ i.update_time }}</td>
                             <td> {{ i.transfer }}</td>
                             <td> {{ i.fee }}</td>
                             <td> {{ i.total }}</td>
@@ -146,10 +146,7 @@
                         {%  endfor %}
 
                 {% endif %}
-
-{#                {% if list %}#}
-{#                    <p> Ничего по данной информации не найдено </p>#}
-{#                {% endif %}#}
+                </table>
             </div>
         </div>
 </div>
@@ -162,7 +159,7 @@
 
     <script>
         $(document).ready(function(){
-           $('.btn-1').click(function() {
+           $('.btn-3').click(function() {
                 var empty = false;
                 $.each($('.input-cal'),function() {
                     if($(this).val() == '') {
@@ -172,15 +169,37 @@
                 });
             return !empty;
            });
-           $('.btn-1').click(function() {
-                var empty = false;
-                $.each($('.input-cal'),function() {
-                    if($(this).val() == '') {
-                        alert("Fill the date!!!")
-                       empty = true;
-                   }
-                });
-            return !empty;
+        });
+    </script>
+
+        <script>
+        $(document).ready(function(){
+            $('.btn-1').click(function() {
+                    var empty = false;
+                    $.each($('.id'),function() {
+                        if($(this).val() == '') {
+                            alert("Fill the ID!!!")
+                           empty = true;
+                       }
+                    });
+                return !empty
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function(){
+            $('.btn-2').click(function() {
+                    var empty = false;
+                    $.each($('.reference'),function() {
+                        if($(this).val() == '') {
+                            alert("Fill the reference!!!")
+                           empty = true;
+                       }
+                    });
+                return !empty
+            });
         });
     </script>
 

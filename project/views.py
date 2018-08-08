@@ -536,9 +536,9 @@ class History(TemplateView):
                 found = True
             list = []
             for i in transactions:
-                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
             create_action(request.user,
-                          'Searched updated transaction by id: %s' % (id), id)
+                          'Searched updated transaction by id: %s' % (id), list[0].id)
 
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
@@ -548,13 +548,12 @@ class History(TemplateView):
                 found = True
             list = []
 
-            transactions = transactions.order_by('date', 'update_time', ' time')
+            transactions = transactions.order_by('date', 'update_time', 'time')
             for i in transactions:
-                id_reference = i.id
-                list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
             create_action(request.user,
-                          'Searched updated transaction by reference: %s' %(reference), id_reference)
+                          'Searched updated transaction by reference: %s' %(reference), list[0].id)
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
 

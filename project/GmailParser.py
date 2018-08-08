@@ -14,7 +14,7 @@ server = 'imap.gmail.com'
 login = "thementalistaz@gmail.com"
 password = "redjohnispj"
 attachment_dir = '/home/mrx/Documents/choko-master/docs'
-
+emails = ["asik.zharzhanov@gmail.com", "thementalistaz@gmail.com"]
 class Parser(Thread):
     def __init__(self, name, file):
         Thread.__init__(self)

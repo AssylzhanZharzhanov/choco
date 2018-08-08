@@ -82,7 +82,7 @@ def insertData(datas, request):
                                   fee=datas[i]['fee'], total=datas[i]['total'], updated=False, update_time=datas[i]['time'], company="Chocotravel/Aviata",
                                   reference=datas[i]['reference'])
             transaction.save()
-            create_action(request.user, 'Inserted new transaction which id: %s' %(datas[i]['id']))
+            create_action(request.user, 'Inserted new transaction which id: %s' %(datas[i]['id']), (datas[i]['id']))
             updated = UpdatedTransaction(ids=datas[i]['id'], date=datas[i]['date'], time=datas[i]['time'],
                                          name=datas[i]['bank'], transfer=datas[i]['transfer'],
                                          fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'],
@@ -95,7 +95,7 @@ def insertData(datas, request):
                  updated = UpdatedTransaction(ids = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'], company="Chocotravel/Aviata",
                                   reference=datas[i]['reference'])
-                 create_action(request.user, 'While inserting a data by id %s was updated' %(datas[i]['id']))
+                 create_action(request.user, 'While inserting a data by id %s was updated' %(datas[i]['id']), (datas[i]['id']))
                  updated.save()
                  # write to log if updated
             # print(transactions.get(date=datas[i]['date']).name)
@@ -294,7 +294,7 @@ class FormView(TemplateView):
                                       reference=transactions.reference)
                                 updateTransaction.save()
                                 print(request.session["bank"])
-                                create_action(request.user, "Fixed %s datas by id: %s" %(request.session["bank"], transactions.id))
+                                create_action(request.user, "Fixed %s datas by id: %s" %(transactions.name, transactions.id), transactions.id)
                                 #insert updated datas
 
                 del request.session['bank']
@@ -351,7 +351,7 @@ class FormView(TemplateView):
                     global  fix_datas
                     fix_datas = notequal
 
-                    create_action(request.user, 'Searched transactions between %s and %s in %s' % (start, end, name))
+                    create_action(request.user, 'Searched transactions between %s and %s in %s' % (start, end, name), 0)
                     args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
                             'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction, 'username': auth.get_user(request).username}
                     return render(request, self.template_name, args)
@@ -391,7 +391,7 @@ class FormView(TemplateView):
                         else:
                             ps_notfound.append(Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name))
 
-                    create_action(request.user, 'Searched transactions between %s and %s' % (start.dt.date, end.dt.date))
+                    create_action(request.user, 'Searched transactions between %s and %s' % (start, end),0  )
                     args = {'name': name, 'ps_equal': ps_equal,
                             'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total': ps_equal_total,
                             'ps_notequal_total': ps_notequal_total, 'direction':direction, 'username': auth.get_user(request).username}
@@ -527,7 +527,7 @@ class History(TemplateView):
             # for i in list:
             #     print(i.id)
 
-            create_action(request.user, 'Searched updated transactions between %s and %s in %s' % (start, end, name))
+            create_action(request.user, 'Searched updated transactions between %s and %s in %s' % (start, end, name),0)
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
         if button == "id":
@@ -538,7 +538,7 @@ class History(TemplateView):
             for i in transactions:
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
             create_action(request.user,
-                          'Searched updated transaction by id: %s' % (id))
+                          'Searched updated transaction by id: %s' % (id), id)
 
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
@@ -547,12 +547,14 @@ class History(TemplateView):
             if transactions:
                 found = True
             list = []
+
             transactions = transactions.order_by('date', 'update_time', ' time')
             for i in transactions:
+                id_reference = i.id
                 list.append(UpdatedData(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
 
             create_action(request.user,
-                          'Searched updated transaction by reference: %s' %(reference))
+                          'Searched updated transaction by reference: %s' %(reference), id_reference)
             return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
 

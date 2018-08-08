@@ -17,6 +17,8 @@
 
 {% block login %}
 
+        <h4> {{ message }}</h4>
+
         <form action="/auth/login/" method="post">
         <div class="form-group">
             {% csrf_token %}

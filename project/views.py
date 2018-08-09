@@ -33,6 +33,7 @@ import plotly.graph_objs as go
 import logging
 from project.models import UpdatedTransaction
 from actions.utils import create_action
+from .models import Task
 logger = logging.getLogger(__name__)
 # from project.models import Data
 
@@ -99,7 +100,7 @@ def insertData(datas, request):
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
                  updated = UpdatedTransaction(ids = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'], company="Chocotravel/Aviata",
-                                  reference=datas[i]['reference'])
+                                  reference=datas[i]['reference'], fixed=False)
                  create_action(request.user, 'While inserting a data by id %s was updated' %(datas[i]['id']), (datas[i]['id']))
                  updated.save()
                  # write to log if updated
@@ -241,7 +242,7 @@ class ToursimParser:
         insertData(datas,self.request)
 
 #-------------------------------------------------------------------------------------------------------------------
-
+notequals_to_fix = []
 ids = [1,2,3,4]
 names = ['kaspi', 'processing', 'tourism', 'kazkom']
 def getUsers():
@@ -276,7 +277,7 @@ class FormView(TemplateView):
         return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
     def post(self,request):
-        global seq, snon, sfound, columns
+        global seq, snon, sfound, columns, seq_total, snon_total
         columns = ['id', 'date', 'time', 'transfer', 'fee', 'total', 'reference', 'bank']
 
         submitbutton = request.POST.get("submit")
@@ -299,11 +300,21 @@ class FormView(TemplateView):
             if send_message == 'send':
                 selected_user = request.POST.get("workers")
                 selected_ids = request.POST.get("selected_ids")
-                
+                selected_ids_splitted = selected_ids.split(' ')
+                selected_ids_arr = []
+                print(selected_ids_splitted)
+                for i in selected_ids_splitted:
+                    if i == '':
+                        continue
+                    selected_ids_arr.append(i)
 
+                for i in selected_ids_arr:
+                    message = Task(user=selected_user, ids=i)
+                    message.save()
 
                 direction = "ChocoToPayment"
-                return render(request, self.template_name,{'direction':direction})
+                return render(request, self.template_name,{'name': name, 'equal': seq, 'notequal': snon, 'notfound': sfound,
+                            'equal_total': seq_total, 'notequal_total': snon_total,'direction':direction, 'username': auth.get_user(request).username})
 
             if fixbutton == 'fix':
                 Fix = []
@@ -320,9 +331,10 @@ class FormView(TemplateView):
                             if x['order_id'] == Fix[i].id and x['payment_reference'] == Fix[i].reference:
                                 x['payment_amount'] = notFix[i].transfer
                                 transactions = Transaction.objects.get(id = Fix[i].id, reference=Fix[i].reference)
-                                updateTransaction = UpdatedTransaction(ids = transactions.id, date = transactions.date, time = transactions.time, name = transactions.name, transfer=transactions.transfer,
+                                Transaction.objects.filter(id=Fix[i].id).update(fixed=True)
+                                updateTransaction = UpdatedTransaction(ids = transactions.id, date = datetime.datetime.date(datetime.datetime.now()), time = transactions.time, name = transactions.name, transfer=transactions.transfer,
                                       fee=transactions.fee, total=transactions.total, update_time=datetime.datetime.time(datetime.datetime.now()), company=transactions.company,
-                                      reference=transactions.reference)
+                                      reference=transactions.reference, fixed=True)
                                 updateTransaction.save()
                                 print(request.session["bank"])
                                 create_action(request.user, "Fixed %s datas by id: %s" %(transactions.name, transactions.id), transactions.id)
@@ -381,10 +393,13 @@ class FormView(TemplateView):
                                                      data['payment_amount'], 0, data['payment_amount'], company))
                     global  fix_datas
                     fix_datas = notequal
-
+                    datas = notequal
                     seq = equal
                     snon = notequal
                     sfound = notfound
+                    seq_total = equal_total
+                    snon_total = notequal_total
+
                     create_action(request.user, 'Searched transactions between %s and %s in %s' % (start, end, name), 0)
                     args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
                             'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction, 'username': auth.get_user(request).username}
@@ -950,6 +965,33 @@ class Analytics(TemplateView):
 
 class Tasks(TemplateView):
     template_name = 'project/Tasks.html'
+    notequal = []
+
     def get(self, request):
+        if not request.user.is_authenticated:
+            args = {'message': "Please enter your username and password! "}
+            return render(request, 'login.html', args)
+
+        username = request.user
+        datas_to_fix = Task.objects.filter(user=username)
+        ids = []
+        print(len(datas_to_fix))
+        for i in datas_to_fix:
+            ids.append(i.ids)
+        datas = []
+
+        for i in ids:
+            transaction=Transaction.objects.filter(id=i)
+
+
+        for i in notequals_to_fix:
+            print(i.id)
+
 
         return render(request, self.template_name, {})
+
+    def post(self, request):
+        username = request.user
+        print(request.user)
+        return render(request, self.template_name, {})
+

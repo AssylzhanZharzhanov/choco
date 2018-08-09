@@ -26,7 +26,25 @@ class Transaction(models.Model):
     updated = models.BooleanField()
     update_time = models.TimeField()
     reference = models.CharField(max_length=200)
+    fixed = models.BooleanField()
 
+
+class NumberOfTransactions(models.Model):
+    amount_equal_transactions = models.IntegerField()
+    amount_not_equal_transactions = models.IntegerField()
+    amount_not_found_transactions = models.IntegerField()
+
+
+class NotEqualTransaction(models.Model):
+    id = models.IntegerField(primary_key=True)
+    date = models.DateField()
+    time = models.TimeField()
+    name = models.CharField(max_length=200)
+    transfer = models.IntegerField()
+    fee = models.IntegerField()
+    total = models.IntegerField()
+    company = models.CharField(max_length=200)
+    reference = models.CharField(max_length=200)
 
 class UpdatedTransaction(models.Model):
     ids = models.IntegerField()
@@ -40,6 +58,7 @@ class UpdatedTransaction(models.Model):
     # updated = models.BooleanField()
     update_time = models.TimeField()
     reference = models.CharField(max_length=200)
+    fixed = models.BooleanField()
 
 class Task(models.Model):
     user = models.CharField(max_length=200)

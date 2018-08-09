@@ -52,6 +52,12 @@
 
 <h1 class="text-center my-3"> Analytics page </h1>
 
+{% if graph %}
+<div class="d-flex justify-content-center" style="">
+{{ graph|safe }}
+</div>
+{% endif %}
+
 
 
 </body>

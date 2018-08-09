@@ -1,9 +1,13 @@
+import csv
 import datetime
 import json
+
+import xlwt
 from dateutil import parser
 from collections import namedtuple
 
 from django.contrib import auth
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from project.forms import PostForm
@@ -24,6 +28,8 @@ import re
 import codecs
 import pandas as pd
 import numpy as np
+import plotly.offline as opy
+import plotly.graph_objs as go
 # from project.models import Payment,KaspiParser,NurbankParser,KazkomParser,ToursimParser
 import logging
 from project.models import UpdatedTransaction
@@ -50,18 +56,18 @@ class Data:
         self.total = total
         self.bank = bank
 
-        def getArr(self):
-            data = {
-                'id': self.id,
-                'date':self.date,
-                'time': self.time,
-                'transfer': self.transfer,
-                'reference': self.reference,
-                'fee':self.fee,
-                'total': self.total,
-                'bank':self.bank
-            }
-            return data
+    def getArr(self):
+        data = {
+            'id': self.id,
+            'date':self.date,
+            'time': self.time,
+            'transfer': self.transfer,
+            'reference': self.reference,
+            'fee':self.fee,
+            'total': self.total,
+            'bank':self.bank
+        }
+        return data
 
 class Payment:
     def __init__(self, name, file):
@@ -83,12 +89,12 @@ def insertData(datas, request):
                                   reference=datas[i]['reference'])
             transaction.save()
             create_action(request.user, 'Inserted new transaction which id: %s' %(datas[i]['id']), (datas[i]['id']))
-            updated = UpdatedTransaction(ids=datas[i]['id'], date=datas[i]['date'], time=datas[i]['time'],
-                                         name=datas[i]['bank'], transfer=datas[i]['transfer'],
-                                         fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'],
-                                         company="Chocotravel/Aviata",
-                                         reference=datas[i]['reference'])
-            updated.save()
+            # updated = UpdatedTransaction(ids=datas[i]['id'], date=datas[i]['date'], time=datas[i]['time'],
+            #                              name=datas[i]['bank'], transfer=datas[i]['transfer'],
+            #                              fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'],
+            #                              company="Chocotravel/Aviata",
+            #                              reference=datas[i]['reference'])
+            # updated.save()
         else:
              if datas[i]['time'] > transactions.get(date=datas[i]['date']).time and datas[i]['date'] >= transactions.get(date=datas[i]['date']).date :
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
@@ -241,8 +247,10 @@ ids = [1,2,3,4]
 names = ['kaspi', 'processing', 'tourism', 'kazkom']
 
 class FormView(TemplateView):
-    template_name = 'project/transaction_list.html'
 
+    global seq, snon, sfound, columns
+
+    template_name = "project/transaction_list.html"
     simplelist = []
     for i in range(0, len(names)):
         files = []
@@ -258,6 +266,8 @@ class FormView(TemplateView):
         return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
     def post(self,request):
+        global seq, snon, sfound, columns
+        columns = ['id', 'date', 'time', 'transfer', 'fee', 'total', 'reference', 'bank']
 
         submitbutton = request.POST.get("submit")
         fixbutton = request.POST.get("fix")
@@ -266,6 +276,7 @@ class FormView(TemplateView):
         start = request.POST.get("start_date")
         end = request.POST.get("end_date")
         direction = request.POST.get("direction")
+        company =request.POST.get("company")
         filename = '/home/mrx/Documents/choko-master/docs/api.json'
         myfile = open(filename, 'r', encoding='Latin-1')
         json_data = json.load(myfile)
@@ -290,7 +301,7 @@ class FormView(TemplateView):
                                 x['payment_amount'] = notFix[i].transfer
                                 transactions = Transaction.objects.get(id = Fix[i].id, reference=Fix[i].reference)
                                 updateTransaction = UpdatedTransaction(ids = transactions.id, date = transactions.date, time = transactions.time, name = transactions.name, transfer=transactions.transfer,
-                                      fee=transactions.fee, total=transactions.total, update_time=datetime.datetime.time(datetime.datetime.now()), company="Chocotravel/Aviata",
+                                      fee=transactions.fee, total=transactions.total, update_time=datetime.datetime.time(datetime.datetime.now()), company=transactions.company,
                                       reference=transactions.reference)
                                 updateTransaction.save()
                                 print(request.session["bank"])
@@ -316,7 +327,7 @@ class FormView(TemplateView):
 
                     for data in json_data:
                         if data['payment_code'] == name.upper():
-                            tr = Transaction.objects.filter(id = data['order_id'],date__range=[start, end])
+                            tr = Transaction.objects.filter(id = data['order_id'],date__range=[start, end],company=company)
                             if len(tr) > 0:
                                 for i in tr:
                                     if i.transfer == data['payment_amount'] and i.reference == data['payment_reference']:
@@ -324,7 +335,7 @@ class FormView(TemplateView):
                                         b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
                                                  datetime.datetime.time(parser.parse(data['date_created'])),
                                                  data['payment_reference'], data['payment_amount'], 0, data['payment_amount'],
-                                                 'Chocotravel/Aviata')
+                                                 company)
                                         equal.append(a)
                                         equal.append(b)
                                         equal_total.transfer = float(equal_total.transfer) + float(a.transfer)
@@ -338,7 +349,7 @@ class FormView(TemplateView):
                                                  datetime.datetime.time(parser.parse(data['date_created'])),
                                                  data['payment_reference'],
                                                  data['payment_amount'], 0, data['payment_amount'],
-                                                 'Chocotravel/Aviata')
+                                                 company)
                                         notequal.append(a)
                                         notequal.append(b)
                                         notequal_total.transfer = notequal_total.transfer + a.transfer
@@ -347,10 +358,13 @@ class FormView(TemplateView):
                             else:
                                 notfound.append(Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
                                                      datetime.datetime.time(parser.parse(data['date_created'])), data['payment_reference'],
-                                                     data['payment_amount'], 0, data['payment_amount'], 'Chocotravel/Aviata'))
+                                                     data['payment_amount'], 0, data['payment_amount'], company))
                     global  fix_datas
                     fix_datas = notequal
 
+                    seq = equal
+                    snon = notequal
+                    sfound = notfound
                     create_action(request.user, 'Searched transactions between %s and %s in %s' % (start, end, name), 0)
                     args = {'name': name, 'equal': equal, 'notequal': notequal, 'notfound': notfound,
                             'equal_total': equal_total, 'notequal_total': notequal_total,'direction':direction, 'username': auth.get_user(request).username}
@@ -362,7 +376,7 @@ class FormView(TemplateView):
                     ps_notfound = []
                     ps_equal_total = Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
                     ps_notequal_total =  Data(' ', ' ', ' ', ' ', 0, 0, 0, ' ')
-                    transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end])
+                    transactions = Transaction.objects.filter(name__contains=name, date__range=[start, end], company=company)
                     # print(len(transactions))
                     for i in transactions:
                         data = [x for x in json_data if x['order_id'] == i.id and x['payment_code'] == name.upper()]
@@ -371,18 +385,18 @@ class FormView(TemplateView):
                                 a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                                 b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
                                          datetime.datetime.time(parser.parse(data[0]['date_created'])),data[0]['payment_reference'],
-                                         data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
+                                         data[0]['payment_amount'], 0, data[0]['payment_amount'], company)
                                 ps_equal.append(a)
                                 ps_equal.append(b)
                                 ps_equal_total.transfer = ps_equal_total.transfer + a.transfer
                                 ps_equal_total.fee = ps_equal_total.fee + a.fee
                                 ps_equal_total.total = ps_equal_total.total + a.total
-                            elif data[0]['payment_amount'] != i.transfer  and i.reference == data[0]['payment_referencex']:
+                            elif data[0]['payment_amount'] != i.transfer  and i.reference == data[0]['payment_reference']:
                                 a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
                                 b = Data(data[0]['order_id'], datetime.datetime.date(parser.parse(data[0]['date_created'])),
                                          datetime.datetime.time(parser.parse(data[0]['date_created'])),
                                          data[0]['payment_reference'],
-                                         data[0]['payment_amount'], 0, data[0]['payment_amount'], 'Chocotravel/Aviata')
+                                         data[0]['payment_amount'], 0, data[0]['payment_amount'], company)
                                 ps_notequal.append(a)
                                 ps_notequal.append(b)
                                 ps_notequal_total.transfer = ps_notequal_total.transfer + a.transfer
@@ -391,7 +405,10 @@ class FormView(TemplateView):
                         else:
                             ps_notfound.append(Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name))
 
-                    create_action(request.user, 'Searched transactions between %s and %s' % (start, end),0  )
+                    create_action(request.user, 'Searched transactions of %s between %s and %s' % (company,start, end),0  )
+                    seq = ps_equal
+                    snon = ps_notequal
+                    sfound = ps_notfound
                     args = {'name': name, 'ps_equal': ps_equal,
                             'ps_notequal': ps_notequal, 'ps_notfound': ps_notfound, 'ps_equal_total': ps_equal_total,
                             'ps_notequal_total': ps_notequal_total, 'direction':direction, 'username': auth.get_user(request).username}
@@ -418,6 +435,269 @@ class FormView(TemplateView):
                 direction = "ChocoToPayment"
                 return render(request, self.template_name, {'direction':direction})
 
+            if(submitbutton == "download"):
+                global seq
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_equal.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in seq:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "nondownload"):
+                global snon
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_not_equal.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in snon:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "founddownload"):
+                global sfound
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_not_found.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in sfound:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "excel"):
+                global seq
+                print("excel")
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=equal.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("Equal")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+
+                for obj in seq:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                    for col_num in range(len(row)):
+                        ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
+
+            if (submitbutton == "foundexcel"):
+                global sfound
+                print("foundexcel")
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=not_found.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("NotFound")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+
+                for obj in sfound:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                    for col_num in range(len(row)):
+                        ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
+
+            if (submitbutton == "nonexcel"):
+                global snon
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=notequal.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("Equal")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+                for obj in snon:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                for col_num in range(len(row)):
+                    ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
+
+            if (submitbutton == "download"):
+                global seq
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_equal.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in seq:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "nondownload"):
+                global snon
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_not_equal.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in snon:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "founddownload"):
+                global sfound
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment;filename=export_not_found.csv'
+                writer = csv.writer(response)
+                writer.writerow(columns)
+                for obj in sfound:
+                    writer.writerow([getattr(obj, field) for field in columns])
+                return response
+
+            if (submitbutton == "excel"):
+                global seq
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=equal.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("Equal")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+
+                for obj in seq:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                    for col_num in range(len(row)):
+                        ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
+
+            if (submitbutton == "foundexcel"):
+                global sfound
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=not_found.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("NotFound")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+
+                for obj in sfound:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                    for col_num in range(len(row)):
+                        ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
+
+            if (submitbutton == "nonexcel"):
+                global snon
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=notequal.xls'
+                wb = xlwt.Workbook(encoding='utf-8')
+                ws = wb.add_sheet("Equal")
+
+                row_num = 0
+
+                font_style = xlwt.XFStyle()
+                font_style.font.bold = True
+
+                for col_num in range(len(columns)):
+                    ws.write(row_num, col_num, columns[col_num], font_style)
+
+                font_style = xlwt.XFStyle()
+                font_style.alignment.wrap = 1
+                for obj in snon:
+                    row_num += 1
+                    row = [
+                        obj.id,
+                        obj.date,
+                        obj.transfer,
+                        obj.fee,
+                        obj.total,
+                        obj.bank,
+                    ]
+                for col_num in range(len(row)):
+                    ws.write(row_num, col_num, row[col_num], font_style)
+
+                wb.save(response)
+                return response
 
 
 class ParseForm(TemplateView):
@@ -504,65 +784,145 @@ class History(TemplateView):
 
 
     def get(self, request):
-        # found = False
-        return render(request, self.template_name, {})
+        found = True
+        return render(request, self.template_name, {'found':found})
 
     def post(self, request):
-        button = request.POST.get("find")
-        id = request.POST.get('id')
-        reference = request.POST.get('reference')
-        found = False
-        name = request.POST.get("name")
+        if not request.user.is_authenticated:
+            args = {'message': "Please enter your username and password! "}
+            return render(request, 'login.html', args)
+        else:
+            button = request.POST.get("find")
+            id = request.POST.get('id')
+            reference = request.POST.get('reference')
 
-        if button == "range":
-            start = request.POST.get("start_date")
-            end = request.POST.get("end_date")
+            name = request.POST.get("name")
 
-            transactions = UpdatedTransaction.objects.filter(name=name,date__range=[start, end])
-            if transactions:
-                found = True
-            list = []
-            for i in transactions:
-                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
-            # for i in list:
-            #     print(i.id)
+            if button == "range":
+                start = request.POST.get("start_date")
+                end = request.POST.get("end_date")
+                found = False
+                transactions = UpdatedTransaction.objects.filter(name=name,date__range=[start, end])
+                if transactions:
+                    found = True
+                list = []
+                for i in transactions:
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                # for i in list:
+                #     print(i.id)
 
-            create_action(request.user, 'Searched updated transactions between %s and %s in %s' % (start, end, name),0)
-            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
+                create_action(request.user, 'Searched updated transactions between %s and %s in %s' %(start, end, name),0)
+                return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
-        if button == "id":
-            transactions = UpdatedTransaction.objects.filter(ids = id, name=name)
-            if transactions:
-                found = True
-            list = []
-            for i in transactions:
-                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
-            create_action(request.user,
-                          'Searched updated transaction by id: %s' % (id), list[0].id)
+            if button == "id":
+                found = False
+                transactions = UpdatedTransaction.objects.filter(ids = id)
+                if transactions:
+                    found = True
+                list = []
+                for i in transactions:
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                if found:
+                    create_action(request.user,
+                              'Searched updated transaction by id: %s' % (id), id)
+                else:
+                    create_action(request.user,
+                                  'Failed in searching updated transaction by id: %s' % (id), id)
 
-            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
+                return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
-        if button == "reference":
-            transactions = UpdatedTransaction.objects.filter(reference = reference, name=name)
-            if transactions:
-                found = True
-            list = []
+            if button == "reference":
+                found = False
+                transactions = UpdatedTransaction.objects.filter(reference = reference)
 
-            transactions = transactions.order_by('date', 'update_time', 'time')
-            for i in transactions:
-                list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                if transactions:
+                    found = True
+                list = []
 
-            create_action(request.user,
-                          'Searched updated transaction by reference: %s' %(reference), list[0].id)
-            return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
+                # transactions = transactions.order_by('date', 'update_time', 'time')
+                for i in transactions:
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                # id = UpdatedTransaction.objects.get(reference=reference).ids
+                # print(id)
+
+                if found:
+                    create_action(request.user,
+                              'Searched updated transaction by reference: %s' %(reference), list[0].id)
+                else:
+                    create_action(request.user,
+                                  ' Failed in searching updated transaction by reference: %s' % (reference), -1)
+
+                return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
 
 
-
-        args = {'found': found}
-        return render(request, self.template_name, args)
+            # args = {'found': found}
+            # return render(request, self.template_name, args)
 
 class Analytics(TemplateView):
     template_name = 'project/Analytics.html'
+    # global seq, snon, sfound, columns
 
     def get(self, request):
+        if seq:
+            data = []
+            y = []
+            for i in seq:
+                y.append(i.getArr())
+
+            if len(y)>0:
+                df = pd.DataFrame(y)
+
+                trace1 = go.Scatter(
+                    x=df.date,
+                    y=df.date.value_counts().tolist(),
+                    line=dict(color='#17BECF'),
+                    opacity=0.8)
+                data.append(trace1)
+
+            x = []
+            for i in snon:
+                x.append(i.getArr())
+
+            if len(x)>0:
+                df2 = pd.DataFrame(x)
+                trace2 = go.Scatter(
+                    x=df2.date,
+                    y=df2.id.value_counts().tolist(),
+                    opacity=0.8)
+                data.append(trace2)
+
+            z = []
+            for i in sfound:
+                z.append(i.getArr())
+
+            if len(z)>0:
+                df3 = pd.DataFrame(z)
+                trace3 = go.Scatter(
+                    x=df3.date,
+                    y=df3.date.value_counts().tolist(),
+                    line=dict(color='#7F7F7F'),
+                    opacity=0.8
+                )
+                data.append(trace3)
+
+            # layout = dict(
+            # title="Manually Set Date Range",
+            # xaxis=dict(
+            # range=['2016-07-01', '2016-12-31'])
+            # )
+            layout = go.Layout(title="график", xaxis={'title': 'x1'}, yaxis={'title': 'x2'})
+            figure = go.Figure(data=data, layout=layout)
+            div = opy.plot(figure, auto_open=False, output_type='div')
+            args = {'graph': div}
+
+            return render(request, self.template_name, args)
+        else:
+            return render(request, self.template_name, {})
+
+    def post(self, request):
+
+        if not request.user.is_authenticated:
+            args = {'message': "Please enter your username and password! "}
+            return render(request, 'login.html', args)
+
         return render(request, self.template_name, {})

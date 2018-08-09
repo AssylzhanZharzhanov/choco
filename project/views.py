@@ -1,11 +1,10 @@
 import csv
 import datetime
 import json
-
 import xlwt
 from dateutil import parser
 from collections import namedtuple
-
+from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -245,6 +244,14 @@ class ToursimParser:
 
 ids = [1,2,3,4]
 names = ['kaspi', 'processing', 'tourism', 'kazkom']
+def getUsers():
+    financiers = User.objects.all()
+    financiers_username = []
+    for i in financiers:
+        financiers_username.append(i.username)
+    financiers_username.remove('admin')
+
+    return financiers_username
 
 class FormView(TemplateView):
 
@@ -263,6 +270,9 @@ class FormView(TemplateView):
     def get(self, request):
         form = PostForm()
         direction = "ChocoToPayment"
+        financiers = getUsers()
+        for i in financiers:
+            print(i)
         return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
     def post(self,request):
@@ -280,11 +290,20 @@ class FormView(TemplateView):
         filename = '/home/mrx/Documents/choko-master/docs/api.json'
         myfile = open(filename, 'r', encoding='Latin-1')
         json_data = json.load(myfile)
+        send_message = request.POST.get("send")
   #------------------------------------fix-------------------------------
         if not request.user.is_authenticated:
             args = {'message': "Please enter your username and password! "}
             return render(request, 'login.html', args)
         else:
+            if send_message == 'send':
+                selected_user = request.POST.get("workers")
+                selected_ids = request.POST.get("selected_ids")
+
+
+                direction = "ChocoToPayment"
+                return render(request, self.template_name,{'direction':direction})
+
             if fixbutton == 'fix':
                 Fix = []
                 notFix = []
@@ -924,5 +943,12 @@ class Analytics(TemplateView):
         if not request.user.is_authenticated:
             args = {'message': "Please enter your username and password! "}
             return render(request, 'login.html', args)
+
+        return render(request, self.template_name, {})
+
+
+class Tasks(TemplateView):
+    template_name = 'project/Tasks.html'
+    def get(self, request):
 
         return render(request, self.template_name, {})

@@ -41,6 +41,9 @@ class UpdatedTransaction(models.Model):
     update_time = models.TimeField()
     reference = models.CharField(max_length=200)
 
+class Task(models.Model):
+    user = models.CharField(max_length=200)
+    data = UpdatedTransaction()
 # def insert(self):
 #     self.save()
 

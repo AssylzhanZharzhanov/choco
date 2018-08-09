@@ -89,6 +89,7 @@
         <li><a href="/">Transactions</a></li>
         <li><a href="/history">History</a></li>
         <li><a href="/analytics">Analytics</a></li>
+        <li><a href="/tasks">Tasks</a></li>
         {% if request.session.isAuth  %}
             <li><a href = "/auth/logout/">Выйти ({{ request.session.user }})</a></li>
         {% else %}
@@ -102,8 +103,8 @@
         <form method='post' class="d-flex justify-content-center">
             {% csrf_token %}
 {#             {{ form.as_p }}#}
-            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date" style= 'width:200px'>
-            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date" style= 'width:200px'>
+            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date"  style= 'width:200px'>
+            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date"  style= 'width:200px'>
             <select name ="name" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Kaspi">Kaspi</option>
                         <option value ="Processing">Processing</option>
@@ -135,13 +136,14 @@
 {#        }#}
 {#        </script>#}
 {#    {% endif %}#}
+
     {% if direction == "ChocoToPayment" %}
     <h1 class="text-center my-3"> {{ name }} Transactions</h1>
     <div class="container">
         <div class="row">
         <div class="accordion w-100 " id="accordionExample">
               <div class="card" >
-              <div class="d-flex flex-row w-100"">
+              <div class="d-flex flex-row w-100">
                 <div class="card-header"  style="width: 33.3%;" id="headingOne">
                   <h5 class="mb-0" style="text-align: center;">
                     <button class="btn btn-link" s type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -210,20 +212,23 @@
                     {%  if notequal %}
                         <form method='post' >
                                     {% csrf_token %}
-                            <input type="hidden" name="fix_datas" value={{ notequal }}>
                             <button type="submit" class="btn btn-success ml-3 btn-2" name = "fix" style="float:right" value="fix">Fix datas</button>
                         </form>
                         {% endif %}
-
-                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
-                    <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-                </div>
-
+                     {% if request.session.user == 'admin'  %}
+                         <form method="post">
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
+                     {% endif %}
+                  </div>
                 </div>
               </div>
               <div class="card">
@@ -265,6 +270,8 @@
                                 {% csrf_token %}
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "founddownload" >Download CSV</button>
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
+              </form>
+                     {% if request.session.user == 'admin'  %}
                   <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Aisara">Aisara Ysmagul</option>
                         <option value ="Assylzhan">Assylzhan Zharzhanov</option>
@@ -272,7 +279,7 @@
                         <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                     </select>
                   <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-              </form>
+                    {% endif %}
               </div>
 
             </div>
@@ -328,7 +335,8 @@
 
                 <button class="btn btn-outline-info" type = "submit" name = "submit" value = "download">Download CSV</button>
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>
-
+                </form>
+                                    {% if request.session.user == 'admin'  %}
                     <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Aisara">Aisara Ysmagul</option>
                         <option value ="Assylzhan">Assylzhan Zharzhanov</option>
@@ -336,15 +344,13 @@
                         <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                     </select>
                 <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-                </form>
+                    {% endif %}
                 </div>
 
                 </div>
               </div>
         </div>
             <div class="col-md-10 mx-auto">
-
-
             </div>
         </div>
     </div>
@@ -363,7 +369,7 @@
         <div class="row">
         <div class="accordion w-100 " id="accordionExample">
               <div class="card" >
-              <div class="d-flex flex-row w-100"">
+              <div class="d-flex flex-row w-100">
                 <div class="card-header"  style="width: 33.3%;" id="headingOne">
                   <h5 class="mb-0" style="text-align: center;">
                     <button class="btn btn-link" s type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -429,6 +435,7 @@
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nondownload" >Download CSV</button>
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nonexcel" >Download Excel</button>
                   </form>
+                                      {% if request.session.user == 'admin'  %}
                   <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Aisara">Aisara Ysmagul</option>
                         <option value ="Assylzhan">Assylzhan Zharzhanov</option>
@@ -436,6 +443,7 @@
                         <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                     </select>
                       <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
+                                          {% endif %}
 {#                    {%  if notequal %}#}
 {#                        <form method='post' >#}
 {#                                    {% csrf_token %}#}
@@ -484,11 +492,12 @@
                     </tr>
                     {%  endfor %}
                 </table>
-              <form method="post">
-                <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "founddownload" >Download CSV</button>
-                <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
-                </div>
-            </form>
+                  <form method="post">
+                    <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "founddownload" >Download CSV</button>
+                    <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
+                  </form>
+              </div>
+                {% if request.session.user == 'admin' %}
             <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Aisara">Aisara Ysmagul</option>
                         <option value ="Assylzhan">Assylzhan Zharzhanov</option>
@@ -497,7 +506,7 @@
                     </select>
 
             <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-
+                {% endif %}
             </div>
           </div>
               <div class="card">
@@ -552,15 +561,18 @@
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>
                 </form>
                 </div>
-                <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                    {% if request.session.user == 'admin'  %}
+                <form method="post">
+                    <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Aisara">Aisara Ysmagul</option>
                         <option value ="Assylzhan">Assylzhan Zharzhanov</option>
                         <option value ="Anelya">Anelya Okapova</option>
                         <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                     </select>
-
-                <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-
+                    <input type="hidden" name="users" >
+                    <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
+                </form>
+                        {% endif %}
                 </div>
               </div>
         </div>
@@ -569,153 +581,6 @@
 
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{#        --------------------------------------------------------------------------------------------------------------------------------------------#}
-{#    <div class="container">#}
-{#        <div class="row">#}
-{#            <div class="col-md-10 mx-auto">#}
-{#                <div class = "notequal" >#}
-{#                    <h5> Данные, которые есть в компании но не одинаковы с платежной системой </h5>#}
-{#                    <table>#}
-{#                        <thead class="notequal-thead">#}
-{#                            <th> ID </th>#}
-{#                            <th> DATE </th>#}
-{#                            <th> TIME </th>#}
-{#                            <th> TRANSFER </th>#}
-{#                            <th> FEE </th>#}
-{#                            <th> TOTAL </th>#}
-{#                            <th> REFERENCE </th>#}
-{#                            <th> BANK </th>#}
-{#                        </thead>#}
-{#                        {% for i in ps_notequal %}#}
-{#                        <tr>#}
-{#                            <td> {{ i.id }}</td>#}
-{#                            <td> {{ i.date }}</td>#}
-{#                            <td> {{ i.time }}</td>#}
-{#                            <td> {{ i.transfer }}</td>#}
-{#                            <td> {{ i.fee }}</td>#}
-{#                            <td> {{ i.total }}</td>#}
-{#                            <td> {{ i.reference }}</td>#}
-{#                            <td> {{ i.bank }}</td>#}
-{#                        </tr>#}
-{#                        {%  endfor %}#}
-{#                        <tr class="total">#}
-{#                            <td> TOTAL: </td>#}
-{#                            <td> {{ ps_notequal_total.date }}</td>#}
-{#                            <td> {{ ps_notequal_total.time }}</td>#}
-{#                            <td> {{ ps_notequal_total.transfer }}</td>#}
-{#                            <td> {{ ps_notequal_total.fee }}</td>#}
-{#                            <td> {{ ps_notequal_total.total }}</td>#}
-{#                            <td> {{ ps_notequal_total.reference }}</td>#}
-{#                            <td> {{ ps_notequal_total.bank }}</td>#}
-{#                        </tr>#}
-{##}
-{#                    </table>#}
-{##}
-{#                <button class="btn btn-outline-info" type = "submit" name = "submit" value = "download">Download CSV</button>#}
-{#                <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>#}
-{#                    </div>#}
-{##}
-{#                <div class = "notfound"  style="padding-top: 35px">#}
-{#                <h5> Данные, которых нет у компании </h5>#}
-{#                <table>#}
-{#                    <thead class="notfound-thead">#}
-{#                        <th> ID </th>#}
-{#                            <th> DATE </th>#}
-{#                            <th> TIME </th>#}
-{#                            <th> TRANSFER </th>#}
-{#                            <th> FEE </th>#}
-{#                            <th> TOTAL </th>#}
-{#                            <th> REFERENCE </th>#}
-{#                            <th> BANK </th>#}
-{#                    </thead>#}
-{#                    {% for i in ps_notfound %}#}
-{#                    <tr>#}
-{#                            <td> {{ i.id }}</td>#}
-{#                            <td> {{ i.date }}</td>#}
-{#                            <td> {{ i.time }}</td>#}
-{#                            <td> {{ i.transfer }}</td>#}
-{#                            <td> {{ i.fee }}</td>#}
-{#                            <td> {{ i.total }}</td>#}
-{#                            <td> {{ i.reference }}</td>#}
-{#                            <td> {{ i.bank }}</td>#}
-{#                    </tr>#}
-{#                    {%  endfor %}#}
-{#                </table>#}
-{##}
-{#                <button class="btn btn-outline-info" type = "submit" name = "submit" value = "download">Download CSV</button>#}
-{#                <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>#}
-{#                </div>#}
-{##}
-{#                <div class = "equal"  style="padding-top: 60px" >#}
-{#                <h5> Данные, которые одинаковы в платежной системе и компании  </h5>#}
-{#                <table>#}
-{#                    <thead class="equal-thead">#}
-{#                        <th> ID </th>#}
-{#                            <th> DATE </th>#}
-{#                            <th> TIME </th>#}
-{#                            <th> TRANSFER </th>#}
-{#                            <th> FEE </th>#}
-{#                            <th> TOTAL </th>#}
-{#                            <th> REFERENCE </th>#}
-{#                            <th> BANK </th>#}
-{#                    </thead>#}
-{#                    {% for i in ps_equal %}#}
-{#                    <tr>#}
-{#                            <td> {{ i.id }}</td>#}
-{#                            <td> {{ i.date }}</td>#}
-{#                            <td> {{ i.time }}</td>#}
-{#                            <td> {{ i.transfer }}</td>#}
-{#                            <td> {{ i.fee }}</td>#}
-{#                            <td> {{ i.total }}</td>#}
-{#                            <td> {{ i.reference }}</td>#}
-{#                            <td> {{ i.bank }}</td>#}
-{#                    </tr>#}
-{#                    {%  endfor %}#}
-{#                     <tr class="total">#}
-{#                        <td> TOTAL: </td>#}
-{#                        <td> {{ ps_equal_total.date }}</td>#}
-{#                         <td> {{ ps_equal_total.time }}</td>#}
-{#                         <td> {{ ps_equal_total.transfer }}</td>#}
-{#                         <td> {{ ps_equal_total.fee }}</td>#}
-{#                         <td> {{ ps_equal_total.total }}</td>#}
-{#                         <td> {{ ps_equal_total.reference }}</td>#}
-{#                         <td> {{ ps_equal_total.bank }}</td>#}
-{#                    </tr>#}
-{#                </table>#}
-{##}
-{#                <button class="btn btn-outline-info" type = "submit" name = "submit" value = "download">Download CSV</button>#}
-{#                <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>#}
-{#                </div>#}
-{##}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
     {% endif %}
 
     <script
@@ -736,7 +601,12 @@
             $("#table tr.selected").each(function(){
                 selected.push($('td', this).html());
             });
-            sentMessage(selected);
+            var str = ""
+            for(var i = 0; i<selected.length; i++){
+                str += selected[i] + " ";
+            }
+             document.getElementById("selected_ids").value = str;
+            {#sentMessage(selected);#}
         });
 
         function sentMessage(s){
@@ -757,9 +627,10 @@
             return !empty;
            });
         });
-    </script><script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
 
 </html>

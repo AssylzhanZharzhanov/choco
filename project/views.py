@@ -299,6 +299,7 @@ class FormView(TemplateView):
             if send_message == 'send':
                 selected_user = request.POST.get("workers")
                 selected_ids = request.POST.get("selected_ids")
+                
 
 
                 direction = "ChocoToPayment"

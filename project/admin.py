@@ -15,8 +15,12 @@ class UpdatedTransactionAdmin(admin.ModelAdmin):
     list_filter = ('date','time')
     search_fields = ('ids',)
 
+class TasksTransaction(admin.ModelAdmin):
+    list_display = ('user', 'ids')
+    # list_filter = ('ids')
+    search_fields = ('user', 'ids')
 
 admin.site.register(Transaction,TransactionAdmin)
 admin.site.register(UpdatedTransaction, UpdatedTransactionAdmin)
-admin.site.register(Task)
+admin.site.register(Task, TasksTransaction)
 

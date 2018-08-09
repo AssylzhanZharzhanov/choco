@@ -43,7 +43,9 @@ class UpdatedTransaction(models.Model):
 
 class Task(models.Model):
     user = models.CharField(max_length=200)
-    data = UpdatedTransaction()
+    # data = UpdatedTransaction()
+    ids = models.IntegerField(null=True, blank=True,db_index=True)
+
 # def insert(self):
 #     self.save()
 

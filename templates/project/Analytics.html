@@ -50,13 +50,17 @@
     </ul>
     </ul>
 
-<h1 class="text-center my-3"> Analytics page </h1>
-
-{% if graph %}
-<div class="d-flex justify-content-center" style="">
-{{ graph|safe }}
-</div>
-{% endif %}
+    <h1 class="text-center my-3"> Analytics page </h1>
+    <div class = "d-flex justify-content-center">
+        <button class = "btn btn-outline-info center-block">Ежедневно</button>
+        <button class = "btn btn-outline-info center-block">Еженедельно</button>
+        <button class = "btn btn-outline-info center-block">Ежемесячно</button>
+    </div>
+    {% if graph %}
+    <div class="d-flex justify-content-center" style="">
+    {{ graph|safe }}
+    </div>;
+    {% endif %}
 
 
 

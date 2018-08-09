@@ -6,10 +6,14 @@
 </head>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+<script src="jquery-3.3.1.min.js"></script>
 <style>
     body, html {
         font-size: 12px;
+    }
+    .selected {
+    background-color: brown;
+    color: #FFF;
     }
     table {
         font-family: arial, sans-serif;
@@ -163,7 +167,7 @@
                   <div class = "notequal" >
                     <h5 class="ml-3"> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
 
-                    <table >
+                    <table id ="table">
                         <thead class="notequal-thead">
                             <th> ID </th>
                             <th> DATE </th>
@@ -211,7 +215,13 @@
                         </form>
                         {% endif %}
 
-
+                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
+                    <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
                 </div>
 
                 </div>
@@ -227,7 +237,7 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
               <div class = "notfound mt-2 p-2">
                 <h5  class="ml-3"> Данные, которых нет в платежной системе </h5>
-                <table>
+                <table id="table">
                     <thead class="notfound-thead">
                             <th> ID </th>
                             <th> DATE </th>
@@ -255,6 +265,13 @@
                                 {% csrf_token %}
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "founddownload" >Download CSV</button>
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
+                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
+                  <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
               </form>
               </div>
 
@@ -272,7 +289,7 @@
 
                 <div class = "equal"  style="" >
                 <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
-                <table>
+                <table id = "table">
                     <thead class="equal-thead">
                             <th> ID </th>
                                 <th> DATE </th>
@@ -311,6 +328,14 @@
 
                 <button class="btn btn-outline-info" type = "submit" name = "submit" value = "download">Download CSV</button>
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>
+
+                    <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
+                <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
                 </form>
                 </div>
 
@@ -364,7 +389,7 @@
                   <div class = "notequal" >
                     <h5 class="ml-3"> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
 
-                    <table >
+                    <table id = "table">
                         <thead class="notequal-thead">
                             <th> ID </th>
                             <th> DATE </th>
@@ -404,6 +429,13 @@
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nondownload" >Download CSV</button>
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nonexcel" >Download Excel</button>
                   </form>
+                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
+                      <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
 {#                    {%  if notequal %}#}
 {#                        <form method='post' >#}
 {#                                    {% csrf_token %}#}
@@ -428,7 +460,7 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
               <div class = "notfound mt-2 p-2">
                 <h5  class="ml-3"> Данные, которых нет в платежной системе </h5>
-                <table>
+                <table id = "table">
                     <thead class="notfound-thead">
                             <th> ID </th>
                             <th> DATE </th>
@@ -457,6 +489,14 @@
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
                 </div>
             </form>
+            <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
+
+            <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
 
             </div>
           </div>
@@ -472,7 +512,7 @@
 
                 <div class = "equal"  style="" >
                 <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
-                <table>
+                <table id = "table">
                     <thead class="equal-thead">
                             <th> ID </th>
                                 <th> DATE </th>
@@ -512,7 +552,14 @@
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>
                 </form>
                 </div>
+                <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                        <option value ="Aisara">Aisara Ysmagul</option>
+                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                        <option value ="Anelya">Anelya Okapova</option>
+                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                    </select>
 
+                <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
 
                 </div>
               </div>
@@ -678,6 +725,26 @@
     </script>
 
     <script>
+
+        $("#table tr").click(function(){
+           $(this).toggleClass('selected');
+           var value=$(this).find('td').html();
+        });
+
+        $('.ok').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).html());
+            });
+            sentMessage(selected);
+        });
+
+        function sentMessage(s){
+            alert(s)
+        }
+
+
+
         $(document).ready(function(){
            $('.btn-1').click(function() {
                 var empty = false;

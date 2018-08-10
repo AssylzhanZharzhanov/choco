@@ -251,13 +251,11 @@ def getUsers():
     for i in financiers:
         financiers_username.append(i.username)
     financiers_username.remove('admin')
-
     return financiers_username
 
+
 class FormView(TemplateView):
-
     global seq, snon, sfound, columns
-
     template_name = "project/transaction_list.html"
     simplelist = []
     for i in range(0, len(names)):
@@ -275,10 +273,38 @@ class FormView(TemplateView):
 
         return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
-    def post(self,request):
-        global seq, snon, sfound, columns, seq_total, snon_total
-        columns = ['id', 'date', 'time', 'transfer', 'fee', 'total', 'reference', 'bank']
+    def getJson(self, str):
+        print(str)
+        if str[5] == 'midnight':
+            data = {
+                'id': str[1],
+                'date': str[2] + " " + str[3] + " " + str[4],
+                'time': "00:00",
+                'transfer': str[6],
+                'fee': str[7],
+                'total':str[8],
+                'reference':str[9],
+                'bank': str[10],
+                'status':str[11]
+            }
+        else:
+            data = {
+                'id': str[1],
+                'date': str[2] + " " + str[3] + " " + str[4],
+                'time': str[5] + " " + str[6],
+                'transfer': str[7],
+                'fee': str[8],
+                'total': str[9],
+                'reference': str[10],
+                'bank': str[11],
+                'status': str[12]
+            }
 
+        return data
+
+    def post(self,request):
+        global seq_total, snon_total
+        columns = ['id', 'date', 'time', 'transfer', 'fee', 'total', 'reference', 'bank']
         submitbutton = request.POST.get("submit")
         fixbutton = request.POST.get("fix")
         name = request.POST.get("name")
@@ -299,31 +325,31 @@ class FormView(TemplateView):
             return render(request, 'login.html', args)
         else:
             if send_message == 'send':
+                start = request.POST.get("start")
+                end = request.POST.get("end")
+                request.session['start'] = start
+                request.session['end'] = end
                 selected_user = request.POST.get("workers")
-                # selected_data = request.POST.get("selected_ids")
                 selected_ids = json.loads(request.POST.get("selected_ids"))
-                print(selected_ids)
-                # selected_ids_splitted = selected_ids.split(' ')
-                # selected_ids_arr = []
-                # start = request.POST.get("start")
-                # end = request.POST.get("end")
-                #
-                # for i in selected_ids_splitted:
-                #     if i == '':
-                #         continue
-                #     selected_ids_arr.append(i)
-                #
-                #
-                # for i in selected_ids_arr:
-                #     message = Task(user=selected_user, ids=i, start=start, end=end)
-                #     message.save()
-                #     create_action(request.user, 'Admin sent a message to %s about transaction  which id: ' % (selected_user), i)
+                datas = []
+                for i in selected_ids:
+                    data = self.getJson(i.split(' '))
+                    datas.append(data)
+                for i in datas:
+                    print(i)
+                for i in datas:
+                    message = Task(user=selected_user,ids=i['id'], time=datetime.datetime.time(parser.parse(i['time'])), date=datetime.datetime.date(parser.parse(i['date'])),
+                                   name=i['bank'], transfer= float(i['transfer']), fee=float(i['fee']), total=float(i['total']), reference=i['reference'], status=i['status'])
+                    message.save()
+                    create_action(request.user, "Admin gave a task to %s inform transaction by id: %s" % (selected_user, i['id']))
 
+                    # print(datetime.datetime.date(parser.parse(i['date'])))
+                    # print(datetime.datetime.time(parser.parse(i['time'])))
 
                 direction = "ChocoToPayment"
-
-                return render(request, self.template_name,{'name': name, 'equal': seq, 'notequal': snon, 'notfound': sfound,
-                            'equal_total': seq_total, 'notequal_total': snon_total,'direction':direction, 'username': auth.get_user(request).username})
+                # args = {'equal': seq, 'notequal': snon, 'notfound': sfound,
+                #             'equal_total': seq_total, 'notequal_total': snon_total}
+                return render(request, self.template_name,{'name': name, 'direction':direction, 'username': auth.get_user(request).username})
 
             if fixbutton == 'fix':
                 Fix = []
@@ -986,6 +1012,32 @@ def getNotEqual(start, end):
             return notequal
 
 
+class TaskData:
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank, user):
+        self.id = id
+        self.date = date
+        self.time = time
+        self.reference = reference
+        self.transfer = transfer
+        self.fee = fee
+        self.total = total
+        self.bank = bank
+        self.user = user
+
+    def getArr(self):
+        data = {
+            'id': self.id,
+            'date': self.date,
+            'time': self.time,
+            'transfer': self.transfer,
+            'reference': self.reference,
+            'fee': self.fee,
+            'total': self.total,
+            'bank': self.bank,
+            'user':self.user
+        }
+        return data
+
 
 class Tasks(TemplateView):
     template_name = 'project/Tasks.html'
@@ -996,35 +1048,51 @@ class Tasks(TemplateView):
             return render(request, 'login.html', args)
 
         if str(request.user) == 'admin':
-            tasks = Task.objects.all()
-            found = False
-            if tasks:
-                found = True
+            notequal = Task.objects.filter(status="notequal")
+            notfound = Task.objects.filter(status="notfound")
+            equal = Task.objects.filter(status="equal")
 
-            args = {'tasks':tasks, 'found':found}
-            return render(request, self.template_name, args)
+            notequal_list= []
+            notfound_list= []
+            equal_list = []
+
+            for i in notequal:
+                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name,i.user)
+                notequal_list.append(data)
+
+            for i in notfound:
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user)
+                notfound_list.append(data)
+
+            for i in equal:
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user)
+                equal_list.append(data)
+
+            return render(request, self.template_name, {'notequal':notequal_list, 'notfound':notfound_list, 'equal': equal_list})
 
         if str(request.user) != 'admin':
             username = request.user
-            datas_to_fix = Task.objects.filter(user=username)
-            datas = []
-            for i in datas_to_fix:
-                notequals = getNotEqual(i.start, i.end)
-                print(len(notequals))
-                for j in notequals:
-                    if i.ids == j.id:
-                        datas.append(j)
+            notequal = Task.objects.filter(user=username, status="notequal")
+            notfound = Task.objects.filter(user=username, status="notfound")
+            equal = Task.objects.filter(user=username, status="equal")
 
-            for i in datas:
-                print(i.id)
-            # for i in ids:
-            #     for data in json_data:
-            #         if i == data[i]['order_id']:
-                     # transaction=Transaction.objects.filter(id=i)
+            notequal_list= []
+            notfound_list= []
+            equal_list = []
 
-            #get a request from api
-            #json
-        # print(str(request.user) == 'admin')
+            for i in notequal:
+                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name)
+                notequal_list.append(data)
+
+            for i in notfound:
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                notfound_list.append(data)
+
+            for i in equal:
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                equal_list.append(data)
+
+            return render(request, self.template_name, {'notequal':notequal_list, 'notfound':notfound_list, 'equal': equal_list})
 
         return render(request, self.template_name, {})
 

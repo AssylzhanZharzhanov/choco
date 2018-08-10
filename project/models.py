@@ -65,7 +65,6 @@ class UpdatedTransaction(models.Model):
 
 class Task(models.Model):
     user = models.CharField(max_length=200)
-    # data = UpdatedTransaction()
     ids = models.IntegerField(null=True, blank=True,db_index=True)
     date = models.DateField()
     time = models.TimeField()
@@ -73,11 +72,9 @@ class Task(models.Model):
     transfer = models.IntegerField()
     fee = models.IntegerField()
     total = models.IntegerField()
-    company = models.CharField(max_length=200)
+    comment = models.CharField(max_length=400)
     reference = models.CharField(max_length=200)
     status = models.CharField(max_length=200)
-    # start= models.DateField()
-    # end = models.DateField()
 
 
 # def insert(self):

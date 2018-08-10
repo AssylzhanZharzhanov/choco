@@ -615,7 +615,7 @@
 
         $("#table tr").click(function(){
            $(this).toggleClass('selected');
-            var $tds = $(this).find('td');
+            {#var $tds = $(this).find('td');#}
             {#var row = "";#}
             {#for(var i = 0; i< $tds.length; i++) {#}
             {#    if ($tds.length != 0) {#}
@@ -630,7 +630,7 @@
         $('.notequal').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
-                selected.push($('td', this).text());
+                selected.push($('td', this).text() + " notequal");
             });
             {#var str = "";#}
             {#for(var i=0; i<rows.length; i++) {#}
@@ -646,7 +646,7 @@
         $('.notfound').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
-                selected.push($('td', this).text());
+                selected.push($('td', this).text()+ " notfound");
             });
             var str = "";
             {#for(var i=0; i<rows.length; i++) {#}
@@ -665,7 +665,7 @@
         $('.equal').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
-                selected.push($('td', this).text());
+                selected.push($('td', this).text() + " equal");
             });
             {#var str = "";#}
             {#for(var i=0; i<rows.length; i++) {#}

@@ -97,39 +97,364 @@
         {% endif %}
     </ul>
 
-    {% if request.user == 'admin' %}
+    {% if user.get_username == 'admin' %}
         <h1 class="text-center my-3"> There are all tasks were given to financiers </h1>
         <div class="container">
-            <div class="row">
-                <div class="col-md-10 mx-auto">
-                    {% if found %}
-                        <table>
-                            <thead class="notequal-thead">
-                                <th> ID </th>
+        <div class="row">
+        <div class="accordion w-100 " id="accordionExample">
+              <div class="card" >
+              <div class="d-flex flex-row w-100">
+                <div class="card-header"  style="width: 33.3%;" id="headingOne">
+                  <h5 class="mb-0" style="text-align: center;">
+                    <button class="btn btn-link" s type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Datas with not equal trasnfer amount
+                    </button>
+                  </h5>
+                </div><div class="card-header"  style="width: 33.3%;" id="headingTwo">
+              <h5 class="mb-0" style="text-align: center;">
+                <button class="btn btn-link collapsed" type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                          Datas not found in database
+                </button>
+              </h5>
+            </div>
+                <div class="card-header"  style="width: 33.3%;" id="headingThree">
+                  <h5 class="mb-0" style="text-align: center;">
+                    <button class="btn btn-link collapsed" style="text-decoration: none;" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Datas with equal parameters
+                    </button>
+                  </h5>
+                </div>
+              </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                  <div class = "notequal" >
+                    <h5 class="ml-3"> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
+
+                    <table id ="table">
+                        <thead class="notequal-thead">
+                            <th> USER </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                        </thead>
+                        {% for i in notequal %}
+                        <tr>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                        </tr>
+                        {%  endfor %}
+                    </table>
+
+                        <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ request.user }}>
+                             <input type="text" name="comment" style="width: 300px; height: 100px">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class = "notfound mt-2 p-2">
+                <h5  class="ml-3"> Данные, которых нет в платежной системе </h5>
+                <table id="table">
+                    <thead class="notfound-thead">
+                            <th> USER </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                    </thead>
+                    {% for i in notfound %}
+                    <tr>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                </table>
+
+                <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ user.get_username }}>
+                             <input type="text" name="comment" style="width: 500px; height: 100px;">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
+              </div>
+            </div>
+          </div>
+              <div class="card">
+{#
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+
+                <div class = "equal"  style="" >
+                <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
+                <table id = "table">
+                    <thead class="equal-thead">
+                            <th> ID </th>
                                 <th> DATE </th>
-                                <th> UPDATED DATE</th>
                                 <th> TIME </th>
-                                <th> UPDATED TIME </th>
                                 <th> TRANSFER </th>
                                 <th> FEE </th>
                                 <th> TOTAL </th>
-                                <th> REFERENCE </th>
-                                <th> BANK </th>
-                            </thead>
-                    {% endif %}
-                    {% if not found %}
-                        <h5 style="text-align: center"> You didn't give task for financiers </h5>
-                    {% endif %}
-                    </table>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                    </thead>
+                    {% for i in equal %}
+                    <tr>
+                        <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                     <tr class="total">
+                        <td> TOTAL: </td>
+                        <td> {{ equal_total.date }}</td>
+                         <td> {{ equal_total.time}}</td>
+                         <td> {{ equal_total.transfer }}</td>
+                        <td> {{ equal_total.fee }}</td>
+                        <td> {{ equal_total.total }}</td>
+                          <td> {{ equal_total.reference}}</td>
+                        <td> {{ equal_total.bank }}</td>
+                    </tr>
+                </table>
+                  <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ request.user }}>
+                             <input type="text" name="comment" style="width: 300px; height: 100px">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
                 </div>
+                </div>
+              </div>
             </div>
-       </div>
-
+        </div>
+    </div>
 
     {% else %}
-        <h1 class="text-center my-3"> Tasks for you, {{ request.session.user }}  </h1>
-    {% endif %}
+        <h1 class="text-center my-3"> There are all tasks were given to financiers </h1>
+        <div class="container">
+        <div class="row">
+        <div class="accordion w-100 " id="accordionExample">
+              <div class="card" >
+              <div class="d-flex flex-row w-100">
+                <div class="card-header"  style="width: 33.3%;" id="headingOne">
+                  <h5 class="mb-0" style="text-align: center;">
+                    <button class="btn btn-link" s type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Datas with not equal trasnfer amount
+                    </button>
+                  </h5>
+                </div><div class="card-header"  style="width: 33.3%;" id="headingTwo">
+              <h5 class="mb-0" style="text-align: center;">
+                <button class="btn btn-link collapsed" type="button" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                          Datas not found in database
+                </button>
+              </h5>
+            </div>
+                <div class="card-header"  style="width: 33.3%;" id="headingThree">
+                  <h5 class="mb-0" style="text-align: center;">
+                    <button class="btn btn-link collapsed" style="text-decoration: none;" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Datas with equal parameters
+                    </button>
+                  </h5>
+                </div>
+              </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                  <div class = "notequal" >
+                    <h5 class="ml-3"> Данные, которые есть в платежной системе но не одинаковы с компанией </h5>
 
+                    <table id ="table">
+                        <thead class="notequal-thead">
+                            <th> USER </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                        </thead>
+                        {% for i in notequal %}
+                        <tr>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                        </tr>
+                        {%  endfor %}
+                    </table>
+
+                        <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ request.user }}>
+                             <input type="text" name="comment" style="width: 300px; height: 100px">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class = "notfound mt-2 p-2">
+                <h5  class="ml-3"> Данные, которых нет в платежной системе </h5>
+                <table id="table">
+                    <thead class="notfound-thead">
+                            <th> USER </th>
+                            <th> ID </th>
+                            <th> DATE </th>
+                            <th> TIME </th>
+                            <th> TRANSFER </th>
+                            <th> FEE </th>
+                            <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                    </thead>
+                    {% for i in notfound %}
+                    <tr>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                </table>
+
+                <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ user.get_username }}>
+                             <input type="text" name="comment" style="width: 500px; height: 100px;">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
+              </div>
+            </div>
+          </div>
+              <div class="card">
+{#
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+
+                <div class = "equal"  style="" >
+                <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
+                <table id = "table">
+                    <thead class="equal-thead">
+                            <th> ID </th>
+                                <th> DATE </th>
+                                <th> TIME </th>
+                                <th> TRANSFER </th>
+                                <th> FEE </th>
+                                <th> TOTAL </th>
+                            <th> REFERENCE </th>
+                            <th> BANK </th>
+                    </thead>
+                    {% for i in equal %}
+                    <tr>
+                        <td> {{ i.id }}</td>
+                            <td> {{ i.date }}</td>
+                            <td> {{ i.time }}</td>
+                            <td> {{ i.transfer }}</td>
+                            <td> {{ i.fee }}</td>
+                            <td> {{ i.total }}</td>
+                            <td> {{ i.reference }}</td>
+                            <td> {{ i.bank }}</td>
+                    </tr>
+                    {%  endfor %}
+                     <tr class="total">
+                        <td> TOTAL: </td>
+                        <td> {{ equal_total.date }}</td>
+                         <td> {{ equal_total.time}}</td>
+                         <td> {{ equal_total.transfer }}</td>
+                        <td> {{ equal_total.fee }}</td>
+                        <td> {{ equal_total.total }}</td>
+                          <td> {{ equal_total.reference}}</td>
+                        <td> {{ equal_total.bank }}</td>
+                    </tr>
+                </table>
+                  <form method="post">
+                                     {% csrf_token %}
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="user" value={{ request.user }}>
+                             <input type="text" name="comment" style="width: 300px; height: 100px">
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                  </form>
+                </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endif %}
+  <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+    </script>
+
+<script>
+     $("#table tr").click(function(){
+           $(this).toggleClass('selected');
+        });
+
+     $('.notequal').on('click', function(e){
+            var selected = [];
+            $("#table tr.ok").each(function(){
+                selected.push($('td', this).html());
+            });
+
+            var json_string = JSON.stringify(selected);
+            document.getElementById("selected_ids").value = json_string;
+        });
+</script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
 </body>
 </html>

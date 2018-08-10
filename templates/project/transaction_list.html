@@ -224,10 +224,10 @@
                                 <option value ="Anelya">Anelya Okapova</option>
                                 <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                             </select>
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_notequal" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="start" value={{ request.session.start }}>
                              <input type="hidden" name="end" value={{ request.session.end }}>
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                             <button class="btn btn-outline-info center-block notequal" id = "tst" type="submit" name="send" value="send">Send</button>
                          </form>
                      {% endif %}
                   </div>
@@ -282,10 +282,10 @@
                                 <option value ="Anelya">Anelya Okapova</option>
                                 <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                             </select>
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_notfound" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="start" value={{ request.session.start }}>
                              <input type="hidden" name="end" value={{ request.session.end }}>
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                             <button class="btn btn-outline-info center-block notfound" id = "tst" type="submit" name="send" value="send">Send</button>
                          </form>
                     {% endif %}
               </div>
@@ -353,10 +353,10 @@
                                 <option value ="Anelya">Anelya Okapova</option>
                                 <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                             </select>
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_equal" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="start" value={{ request.session.start }}>
                              <input type="hidden" name="end" value={{ request.session.end }}>
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                             <button class="btn btn-outline-info center-block equal" id = "tst" type="submit" name="send" value="send">Send</button>
                          </form>
                     {% endif %}
                 </div>
@@ -454,7 +454,7 @@
                                 <option value ="Anelya">Anelya Okapova</option>
                                 <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                             </select>
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="1">
                              <input type="hidden" name="start" value={{ request.session.start }}>
                              <input type="hidden" name="end" value={{ request.session.end }}>
                              <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
@@ -616,31 +616,68 @@
         $("#table tr").click(function(){
            $(this).toggleClass('selected');
             var $tds = $(this).find('td');
-            var row = "";
-            for(var i = 0; i< $tds.length; i++) {
-                if ($tds.length != 0) {
-                    var $currText = $tds.eq(i).text();
-                    row += $currText + " ";
-                }
-            }
-            rows.push(row);
+            {#var row = "";#}
+            {#for(var i = 0; i< $tds.length; i++) {#}
+            {#    if ($tds.length != 0) {#}
+            {#        var $currText = $tds.eq(i).text();#}
+            {#        row += $currText + " ";#}
+            {#    }#}
+
+            {#rows.push(row);#}
         });
 
-        $('.ok').on('click', function(e){
+        {#not equal#}
+        $('.notequal').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
-                selected.push($('td', this).html());
+                selected.push($('td', this).text());
             });
-
+            {#var str = "";#}
+            {#for(var i=0; i<rows.length; i++) {#}
+            {#    str += rows[i] + ","; }#}
+            {#for(var i = 0; i<selected.length; i++){#}
+            {#    str += selected[i] + " "; }#}
+            var json_string = JSON.stringify(selected);
+            {#sentMessage(str);#}
+            document.getElementById("selected_ids_notequal").value = json_string;
+        });
+        {# ----------------------------------------------------------------------------------#}
+        {#notfound#}
+        $('.notfound').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).text());
+            });
             var str = "";
-
-            for(var i = 0; i<selected.length; i++){
-                str += selected[i] + " ";
-            }
-
-             document.getElementById("selected_ids").value = str;
+            {#for(var i=0; i<rows.length; i++) {#}
+            {#    str += rows[i] + ","; }#}
+            {#for(var i = 0; i<selected.length; i++){#}
+            {#    str += selected[i] + " "; }#}
+            {#str = str + "notfound";#}
+            var json_string = JSON.stringify(selected);
+            {#sentMessage(str);#}
+            document.getElementById("selected_ids_notfound").value = json_string;
         });
 
+        {#--------------------------------------------------------------------------------------#}
+        {#equal#}
+
+        $('.equal').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).text());
+            });
+            {#var str = "";#}
+            {#for(var i=0; i<rows.length; i++) {#}
+            {#    str += rows[i] + ","; }#}
+            {#for(var i = 0; i<selected.length; i++){#}
+            {#    str += selected[i] + " "; }#}
+            var json_string = JSON.stringify(selected);
+            {#sentMessage(json_string);#}
+            document.getElementById("selected_ids_equal").value = json_string;
+        });
+
+        {#-------------------------------------------------------------------------------------  #}
         function sentMessage(s){
             alert(s)
         }

@@ -300,25 +300,28 @@ class FormView(TemplateView):
         else:
             if send_message == 'send':
                 selected_user = request.POST.get("workers")
-                selected_ids = request.POST.get("selected_ids")
-                selected_ids_splitted = selected_ids.split(' ')
-                selected_ids_arr = []
-                start = request.POST.get("start")
-                end = request.POST.get("end")
-
-                for i in selected_ids_splitted:
-                    if i == '':
-                        continue
-                    selected_ids_arr.append(i)
-
-
-                for i in selected_ids_arr:
-                    message = Task(user=selected_user, ids=i, start=start, end=end)
-                    message.save()
-                    create_action(request.user, 'Admin sent a message to %s about transaction  which id: ' % (selected_user), i)
+                # selected_data = request.POST.get("selected_ids")
+                selected_ids = json.loads(request.POST.get("selected_ids"))
+                print(selected_ids)
+                # selected_ids_splitted = selected_ids.split(' ')
+                # selected_ids_arr = []
+                # start = request.POST.get("start")
+                # end = request.POST.get("end")
+                #
+                # for i in selected_ids_splitted:
+                #     if i == '':
+                #         continue
+                #     selected_ids_arr.append(i)
+                #
+                #
+                # for i in selected_ids_arr:
+                #     message = Task(user=selected_user, ids=i, start=start, end=end)
+                #     message.save()
+                #     create_action(request.user, 'Admin sent a message to %s about transaction  which id: ' % (selected_user), i)
 
 
                 direction = "ChocoToPayment"
+
                 return render(request, self.template_name,{'name': name, 'equal': seq, 'notequal': snon, 'notfound': sfound,
                             'equal_total': seq_total, 'notequal_total': snon_total,'direction':direction, 'username': auth.get_user(request).username})
 

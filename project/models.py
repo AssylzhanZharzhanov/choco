@@ -45,6 +45,8 @@ class NotEqualTransaction(models.Model):
     total = models.IntegerField()
     company = models.CharField(max_length=200)
     reference = models.CharField(max_length=200)
+    fixed = models.BooleanField()
+
 
 class UpdatedTransaction(models.Model):
     ids = models.IntegerField()
@@ -65,8 +67,17 @@ class Task(models.Model):
     user = models.CharField(max_length=200)
     # data = UpdatedTransaction()
     ids = models.IntegerField(null=True, blank=True,db_index=True)
-    start= models.DateField()
-    end = models.DateField()
+    date = models.DateField()
+    time = models.TimeField()
+    name = models.CharField(max_length=200)
+    transfer = models.IntegerField()
+    fee = models.IntegerField()
+    total = models.IntegerField()
+    company = models.CharField(max_length=200)
+    reference = models.CharField(max_length=200)
+    status = models.CharField(max_length=200)
+    # start= models.DateField()
+    # end = models.DateField()
 
 
 # def insert(self):

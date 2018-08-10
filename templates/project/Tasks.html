@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Tasks</title>
 </head>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -178,7 +178,7 @@
                         <form method='post' >
                                     {% csrf_token %}
                             <input id="ids" type="hidden" name="ids">
-                            <button class="btn btn-outline-info center-block fix" id = "tst" type="submit" name="fix" value="fix">Send</button>
+                            <button class="btn btn-outline-info center-block fix" id = "tst" type="submit" name="fix" value="fix" style="float: right">Fix datas</button>
                         </form>
                         {% endif %}
 
@@ -512,7 +512,7 @@
 
             var json_string = JSON.stringify(selected);
             alert(json_string);
-            document.getElementById("ids").value = json_string;
+            document.getElementById("selected_ids").value = json_string;
         });
 
      function sentMessage(s){

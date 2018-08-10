@@ -1100,11 +1100,30 @@ class Tasks(TemplateView):
 
     def post(self, request):
         username = request.user
-        selected_ids = request.POST.get("ids")
+        ids = request.POST.get("ids")
         comment = request.POST.get("comment")
         fix_button = request.POST.get("fix")
-        #POST send comment
+        send = request.POST.get("send")
 
+        #POST send comment
+        if send == 'send':
+            user = request.POST.get("user")
+            comment = request.POST.get("comment")
+            selected_ids = json.loads(request.POST.get("selected_ids"))
+            ids_arr = []
+            for i in selected_ids:
+                str = i.split(' ')
+                for j in str:
+                    if j == '':
+                        continue
+                    ids_arr.append(j)
+
+            for i in ids_arr:
+                Task.objects.filter(user=username, ids = i).update(comment=comment)
+                create_action(request.user,
+                              'Inserted comment transaction to transaction which id: %s' % (i), i)
+
+            return self.get(request)
 
         #fix datas
         # if fix_button == 'fix':

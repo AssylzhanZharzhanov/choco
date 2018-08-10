@@ -828,14 +828,15 @@ class History(TemplateView):
                 start = request.POST.get("start_date")
                 end = request.POST.get("end_date")
                 found = False
-                transactions = UpdatedTransaction.objects.filter(name=name,date__range=[start, end])
+                transactions = UpdatedTransaction.objects.filter(name=name, date__range=[start, end])
+                print(transactions)
                 if transactions:
                     found = True
+
                 list = []
+
                 for i in transactions:
                     list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date))
-                # for i in list:
-                #     print(i.id)
 
                 create_action(request.user, 'Searched updated transactions between %s and %s in %s' %(start, end, name),0)
                 return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})

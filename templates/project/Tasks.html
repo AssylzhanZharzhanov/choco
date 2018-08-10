@@ -140,6 +140,7 @@
                             <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+                            <th> COMMENT </th>
                         </thead>
                         {% for i in notequal %}
                         <tr>
@@ -152,17 +153,42 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+                             <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                              View Comment
+                            </button></td>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    {{ i.comment }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                         </tr>
                         {%  endfor %}
                     </table>
+                    {%  if notequal %}
+                        <form method='post' >
+                                    {% csrf_token %}
+                            <input id="ids" type="hidden" name="ids">
+                            <button class="btn btn-outline-info center-block fix" id = "tst" type="submit" name="fix" value="fix">Send</button>
+                        </form>
+                        {% endif %}
 
-                        <form method="post">
-                                     {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
-                             <input type="hidden" name="user" value={{ request.user }}>
-                             <input type="text" name="comment" style="width: 300px; height: 100px">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
-                  </form>
+{#                        <form method="post">#}
+{#                                     {% csrf_token %}#}
+{#                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">#}
+{#                             <input type="hidden" name="user" value={{ request.user }}>#}
+{#                             <input type="text" name="comment" style="width: 300px; height: 100px">#}
+{#                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>#}
+{#                  </form>#}
                   </div>
                 </div>
               </div>
@@ -182,6 +208,7 @@
                             <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+                            <th> COMMENT </th>
                     </thead>
                     {% for i in notfound %}
                     <tr>
@@ -194,40 +221,60 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+                            <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                              View Comment
+                            </button></td>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    {{ i.comment }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                     </tr>
                     {%  endfor %}
                 </table>
 
-                <form method="post">
-                                     {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
-                             <input type="hidden" name="user" value={{ user.get_username }}>
-                             <input type="text" name="comment" style="width: 500px; height: 100px;">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
-                  </form>
+{#                <form method="post">#}
+{#                                     {% csrf_token %}#}
+{#                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">#}
+{#                             <input type="hidden" name="user" value={{ user.get_username }}>#}
+{#                             <input type="text" name="comment" style="width: 500px; height: 100px;">#}
+{#                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>#}
+{#                  </form>#}
               </div>
             </div>
           </div>
               <div class="card">
-{#
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
 
                 <div class = "equal"  style="" >
                 <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
                 <table id = "table">
                     <thead class="equal-thead">
-                            <th> ID </th>
+                                <th> USER </th>
+                                <th> ID </th>
                                 <th> DATE </th>
                                 <th> TIME </th>
                                 <th> TRANSFER </th>
                                 <th> FEE </th>
                                 <th> TOTAL </th>
-                            <th> REFERENCE </th>
-                            <th> BANK </th>
+                                <th> REFERENCE </th>
+                                <th> BANK </th>
+                                <th> COMMENT </th>
                     </thead>
                     {% for i in equal %}
                     <tr>
-                        <td> {{ i.id }}</td>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
                             <td> {{ i.date }}</td>
                             <td> {{ i.time }}</td>
                             <td> {{ i.transfer }}</td>
@@ -235,26 +282,34 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+                              <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                              View Comment
+                            </button></td>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    {{ i.comment }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                     </tr>
                     {%  endfor %}
-                     <tr class="total">
-                        <td> TOTAL: </td>
-                        <td> {{ equal_total.date }}</td>
-                         <td> {{ equal_total.time}}</td>
-                         <td> {{ equal_total.transfer }}</td>
-                        <td> {{ equal_total.fee }}</td>
-                        <td> {{ equal_total.total }}</td>
-                          <td> {{ equal_total.reference}}</td>
-                        <td> {{ equal_total.bank }}</td>
-                    </tr>
                 </table>
-                  <form method="post">
-                                     {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
-                             <input type="hidden" name="user" value={{ request.user }}>
-                             <input type="text" name="comment" style="width: 300px; height: 100px">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
-                  </form>
+{#                  <form method="post">#}
+{#                                     {% csrf_token %}#}
+{#                             <input id = "sel{#ected_ids" type="hidden" name="selected_ids" value="">#}
+{#                             <input type="hidden" name="user" value={{ request.user }}>#}
+{#                             <input type="text" name="comment" style="width: 300px; height: 100px">#}
+{#                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>#}
+{#                  </form>#}
                 </div>
                 </div>
               </div>
@@ -305,6 +360,7 @@
                             <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+{#                            <th> COMMENT</th>#}
                         </thead>
                         {% for i in notequal %}
                         <tr>
@@ -317,6 +373,7 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+{#                            <td> {{ i.comment }}</td>#}
                         </tr>
                         {%  endfor %}
                     </table>
@@ -347,6 +404,7 @@
                             <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+{#                            <th> COMMENT</th>#}
                     </thead>
                     {% for i in notfound %}
                     <tr>
@@ -359,6 +417,7 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+{#                            <td> {{ i.comment }}</td>#}
                     </tr>
                     {%  endfor %}
                 </table>
@@ -374,14 +433,13 @@
             </div>
           </div>
               <div class="card">
-{#
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-
                 <div class = "equal"  style="" >
                 <h5 class="ml-3"> Данные, которые одинаковы в платежной системе и компании  </h5>
                 <table id = "table">
                     <thead class="equal-thead">
-                            <th> ID </th>
+                                <th> USER </th>
+                                <th> ID </th>
                                 <th> DATE </th>
                                 <th> TIME </th>
                                 <th> TRANSFER </th>
@@ -389,10 +447,12 @@
                                 <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+{#                            <th> COMMENT </th>#}
                     </thead>
                     {% for i in equal %}
                     <tr>
-                        <td> {{ i.id }}</td>
+                            <td> {{ i.user }}</td>
+                            <td> {{ i.id }}</td>
                             <td> {{ i.date }}</td>
                             <td> {{ i.time }}</td>
                             <td> {{ i.transfer }}</td>
@@ -400,18 +460,10 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+{#                            <td> {{ i.comment }}</td>#}
                     </tr>
                     {%  endfor %}
-                     <tr class="total">
-                        <td> TOTAL: </td>
-                        <td> {{ equal_total.date }}</td>
-                         <td> {{ equal_total.time}}</td>
-                         <td> {{ equal_total.transfer }}</td>
-                        <td> {{ equal_total.fee }}</td>
-                        <td> {{ equal_total.total }}</td>
-                          <td> {{ equal_total.reference}}</td>
-                        <td> {{ equal_total.bank }}</td>
-                    </tr>
+
                 </table>
                   <form method="post">
                                      {% csrf_token %}
@@ -441,15 +493,31 @@
            $(this).toggleClass('selected');
         });
 
-     $('.notequal').on('click', function(e){
+     $('.fix').on('click', function(e){
             var selected = [];
-            $("#table tr.ok").each(function(){
-                selected.push($('td', this).html());
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).eq(1).text());
             });
 
             var json_string = JSON.stringify(selected);
-            document.getElementById("selected_ids").value = json_string;
+            alert(json_string);
+            document.getElementById("ids").value = json_string;
         });
+
+     $('.ok').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).eq(1).text());
+            });
+
+            var json_string = JSON.stringify(selected);
+            alert(json_string);
+            document.getElementById("ids").value = json_string;
+        });
+
+     function sentMessage(s){
+            alert(s)
+        }
 </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

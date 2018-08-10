@@ -17,7 +17,7 @@ class UpdatedTransactionAdmin(admin.ModelAdmin):
     search_fields = ('ids',)
 
 class TasksTransaction(admin.ModelAdmin):
-    list_display = ('user', 'ids', 'date', 'time','transfer','fee','total','reference','name','status')
+    list_display = ('user', 'ids', 'date', 'time','transfer','fee','total','reference','name','status', 'comment')
     list_filter = ('date', 'time')
     search_fields = ('user', 'ids')
 

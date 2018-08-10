@@ -1013,7 +1013,7 @@ def getNotEqual(start, end):
 
 
 class TaskData:
-    def __init__(self, id, date, time, reference, transfer, fee, total, bank, user):
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank, user, comment):
         self.id = id
         self.date = date
         self.time = time
@@ -1023,6 +1023,7 @@ class TaskData:
         self.total = total
         self.bank = bank
         self.user = user
+        self.comment = comment
 
     def getArr(self):
         data = {
@@ -1034,7 +1035,8 @@ class TaskData:
             'fee': self.fee,
             'total': self.total,
             'bank': self.bank,
-            'user':self.user
+            'user':self.user,
+            'comment': self.comment
         }
         return data
 
@@ -1057,15 +1059,15 @@ class Tasks(TemplateView):
             equal_list = []
 
             for i in notequal:
-                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name,i.user)
+                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name,i.user,i.comment)
                 notequal_list.append(data)
 
             for i in notfound:
-                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user)
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user,i.comment)
                 notfound_list.append(data)
 
             for i in equal:
-                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user)
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user,i.comment)
                 equal_list.append(data)
 
             return render(request, self.template_name, {'notequal':notequal_list, 'notfound':notfound_list, 'equal': equal_list})
@@ -1081,15 +1083,15 @@ class Tasks(TemplateView):
             equal_list = []
 
             for i in notequal:
-                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name)
+                data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name,i.user,i.comment)
                 notequal_list.append(data)
 
             for i in notfound:
-                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user,i.comment)
                 notfound_list.append(data)
 
             for i in equal:
-                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user,i.comment)
                 equal_list.append(data)
 
             return render(request, self.template_name, {'notequal':notequal_list, 'notfound':notfound_list, 'equal': equal_list})
@@ -1098,6 +1100,18 @@ class Tasks(TemplateView):
 
     def post(self, request):
         username = request.user
-        print(request.user)
-        return render(request, self.template_name, {})
+        selected_ids = request.POST.get("ids")
+        comment = request.POST.get("comment")
+        fix_button = request.POST.get("fix")
+        #POST send comment
+
+
+        #fix datas
+        # if fix_button == 'fix':
+
+
+
+        # Task.objects.filter(user=username, id =)
+
+        return self.get(request)
 

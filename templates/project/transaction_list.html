@@ -274,13 +274,19 @@
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "foundexcel" >Download Excel</button>
               </form>
                      {% if request.session.user == 'admin'  %}
-                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
-                  <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
+                   <form method="post">
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
                     {% endif %}
               </div>
 
@@ -339,13 +345,19 @@
                 <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "excel" >Download Excel</button>
                 </form>
                                     {% if request.session.user == 'admin'  %}
-                    <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
-                <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
+                  <form method="post">
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
                     {% endif %}
                 </div>
 
@@ -434,13 +446,19 @@
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nonexcel" >Download Excel</button>
                   </form>
                                       {% if request.session.user == 'admin'  %}
-                  <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
-                      <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
+                  <form method="post">
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
                                           {% endif %}
 {#                    {%  if notequal %}#}
 {#                        <form method='post' >#}
@@ -493,12 +511,19 @@
                   </form>
               </div>
                 {% if request.session.user == 'admin' %}
-            <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
+                          <form method="post">
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
 
             <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
                 {% endif %}
@@ -558,15 +583,18 @@
                 </div>
                     {% if request.session.user == 'admin'  %}
                 <form method="post">
-                    <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
-                        <option value ="Aisara">Aisara Ysmagul</option>
-                        <option value ="Assylzhan">Assylzhan Zharzhanov</option>
-                        <option value ="Anelya">Anelya Okapova</option>
-                        <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
-                    </select>
-                    <input type="hidden" name="users" >
-                    <button class="btn btn-outline-info center-block ok" id = "tst">Send</button>
-                </form>
+                                     {% csrf_token %}
+                          <select name ="workers" class="custom-select" id="inputGroupSelect04" style="width:200px">
+                                <option value ="Aisara">Aisara Ysmagul</option>
+                                <option value ="Assylzhan">Assylzhan Zharzhanov</option>
+                                <option value ="Anelya">Anelya Okapova</option>
+                                <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
+                            </select>
+                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
+                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
+                         </form>
                         {% endif %}
                 </div>
               </div>

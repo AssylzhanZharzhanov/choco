@@ -11,7 +11,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 
 class UpdatedTransactionAdmin(admin.ModelAdmin):
-    list_display = ('ids', 'date', 'update_date', 'time','update_time' ,'name','transfer','fee','total','company','reference')
+    list_display = ('ids', 'date', 'update_date', 'time','update_time' ,'name','transfer','fee','total','company','reference', 'fixed')
     list_filter = ('date','time')
     search_fields = ('ids',)
 

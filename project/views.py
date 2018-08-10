@@ -742,7 +742,7 @@ class FormView(TemplateView):
 
 
 class UpdatedData:
-    def __init__(self, id, date, time, reference, transfer, fee, total, bank, update_time, updated_date):
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank, update_time, updated_date, fixed):
         self.id = id
         self.date = date
         self.time=time
@@ -753,6 +753,7 @@ class UpdatedData:
         self.bank = bank
         self.update_time = update_time
         self.updated_date = updated_date
+        self.fixed = fixed
 
         def getArr(self):
             data = {
@@ -768,43 +769,6 @@ class UpdatedData:
                 'bank':self.bank
             }
             return data
-
-
-
-def getNotEqual(start, end):
-    filename = '/home/mrx/Documents/choko-master/docs/api.json'
-    myfile = open(filename, 'r', encoding='Latin-1')
-    json_data = json.load(myfile)
-
-    datas = []
-    equal = []
-    notequal = []
-    notfound = []
-
-    for data in json_data:
-            tr = Transaction.objects.filter(id=data['order_id'], date__range=[start, end])
-            if len(tr) > 0:
-                for i in tr:
-                    if i.transfer == data['payment_amount'] and i.reference == data['payment_reference']:
-                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
-                        b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
-                                 datetime.datetime.time(parser.parse(data['date_created'])),
-                                 data['payment_reference'], data['payment_amount'], 0, data['payment_amount'],
-                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
-                        equal.append(a)
-                        equal.append(b)
-                    elif i.transfer != data['payment_amount'] and i.reference == data['payment_reference']:
-                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
-                        b = Data(data['order_id'],
-                                 datetime.datetime.date(parser.parse(data['date_created'])),
-                                 datetime.datetime.time(parser.parse(data['date_created'])),
-                                 data['payment_reference'],
-                                 data['payment_amount'], 0, data['payment_amount'],
-                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
-                        notequal.append(a)
-                        notequal.append(b)
-            return notequal
-
 
 class History(TemplateView):
     template_name = 'project/History.html'
@@ -836,7 +800,11 @@ class History(TemplateView):
                 list = []
 
                 for i in transactions:
-                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date))
+                    if i.fixed == True:
+                        list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date, 'fixed'))
+                    else:
+                        list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,
+                                                i.update_time, i.update_date, 'not fixed'))
 
                 create_action(request.user, 'Searched updated transactions between %s and %s in %s' %(start, end, name),0)
                 return render(request, self.template_name, {'found': found, 'list': list, 'username': auth.get_user(request).username})
@@ -885,6 +853,7 @@ class History(TemplateView):
             # args = {'found': found}
             # return render(request, self.template_name, args)
 
+# -------------------------------------------------------Analysis-----------------------------------
 class Analytics(TemplateView):
     template_name = 'project/Analytics.html'
     # global seq, snon, sfound, columns
@@ -902,6 +871,7 @@ class Analytics(TemplateView):
                 trace1 = go.Scatter(
                     x=df.date,
                     y=df.date.value_counts().tolist(),
+                    name="Datas with equal parameters",
                     line=dict(color='#17BECF'),
                     opacity=0.8)
                 data.append(trace1)
@@ -915,6 +885,7 @@ class Analytics(TemplateView):
                 trace2 = go.Scatter(
                     x=df2.date,
                     y=df2.id.value_counts().tolist(),
+                    name="Datas with not equal trasnfer amount",
                     opacity=0.8)
                 data.append(trace2)
 
@@ -927,17 +898,38 @@ class Analytics(TemplateView):
                 trace3 = go.Scatter(
                     x=df3.date,
                     y=df3.date.value_counts().tolist(),
+                    name = "Datas not found in database",
                     line=dict(color='#7F7F7F'),
                     opacity=0.8
                 )
                 data.append(trace3)
 
-            # layout = dict(
-            # title="Manually Set Date Range",
-            # xaxis=dict(
-            # range=['2016-07-01', '2016-12-31'])
-            # )
-            layout = go.Layout(title="график", xaxis={'title': 'x1'}, yaxis={'title': 'x2'})
+            layout = dict(
+                title='Time Series',
+                xaxis=dict(
+                    rangeselector=dict(
+                        buttons=list([
+                            dict(count=1,
+                                 label='everyday',
+                                 step='day',
+                                 stepmode='todate'),
+                            dict(count=7,
+                                 label='everyweek',
+                                 step='day',
+                                 stepmode='backward'),
+                            dict(count=6,
+                                 label='everymonth',
+                                 step='month',
+                                 stepmode='backward'),
+                            dict(step='all')
+                        ])
+                    ),
+                    rangeslider=dict(
+                        visible=True
+                    ),
+                    type='date'
+                )
+            )
             figure = go.Figure(data=data, layout=layout)
             div = opy.plot(figure, auto_open=False, output_type='div')
             args = {'graph': div}
@@ -955,25 +947,64 @@ class Analytics(TemplateView):
         return render(request, self.template_name, {})
 
 
+
+def getNotEqual(start, end):
+    filename = '/home/mrx/Documents/choko-master/docs/api.json'
+    myfile = open(filename, 'r', encoding='Latin-1')
+    json_data = json.load(myfile)
+
+    datas = []
+    equal = []
+    notequal = []
+    notfound = []
+
+    for data in json_data:
+            tr = Transaction.objects.filter(id=data['order_id'], date__range=[start, end])
+            if len(tr) > 0:
+                for i in tr:
+                    if i.transfer == data['payment_amount'] and i.reference == data['payment_reference']:
+                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                        b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                 datetime.datetime.time(parser.parse(data['date_created'])),
+                                 data['payment_reference'], data['payment_amount'], 0, data['payment_amount'],
+                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
+                        equal.append(a)
+                        equal.append(b)
+                    elif i.transfer != data['payment_amount'] and i.reference == data['payment_reference']:
+                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                        b = Data(data['order_id'],
+                                 datetime.datetime.date(parser.parse(data['date_created'])),
+                                 datetime.datetime.time(parser.parse(data['date_created'])),
+                                 data['payment_reference'],
+                                 data['payment_amount'], 0, data['payment_amount'],
+                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
+                        notequal.append(a)
+                        notequal.append(b)
+            return notequal
+
+
+
 class Tasks(TemplateView):
     template_name = 'project/Tasks.html'
-    notequal = []
 
     def get(self, request):
         if not request.user.is_authenticated:
             args = {'message': "Please enter your username and password! "}
             return render(request, 'login.html', args)
-        elif request.user == 'admin':
-            tasks = Task.objects.all()
 
-            args = {'tasks':tasks}
+        if str(request.user) == 'admin':
+            tasks = Task.objects.all()
+            found = False
+            if tasks:
+                found = True
+
+            args = {'tasks':tasks, 'found':found}
             return render(request, self.template_name, args)
-        else:
+
+        if str(request.user) != 'admin':
             username = request.user
-            print("heededede")
             datas_to_fix = Task.objects.filter(user=username)
             datas = []
-            print(len(datas_to_fix))
             for i in datas_to_fix:
                 notequals = getNotEqual(i.start, i.end)
                 print(len(notequals))
@@ -990,7 +1021,7 @@ class Tasks(TemplateView):
 
             #get a request from api
             #json
-
+        # print(str(request.user) == 'admin')
 
         return render(request, self.template_name, {})
 

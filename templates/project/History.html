@@ -147,19 +147,21 @@
                             <th> TOTAL </th>
                             <th> REFERENCE </th>
                             <th> BANK </th>
+                            <th> FIXED  STATUS </th>
                         </thead>
                         {% for i in list %}
                         <tr>
                             <td> {{ i.id }}</td>
                             <td> {{ i.date }}</td>
-                            <td> {{ i.updated_date }}</td>
                             <td> {{ i.time }}</td>
+                            <td> {{ i.updated_date }}</td>
                             <td> {{ i.update_time }}</td>
                             <td> {{ i.transfer }}</td>
                             <td> {{ i.fee }}</td>
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
+                            <td> {{ i.fixed }}</td>
                         </tr>
                         {%  endfor %}
 

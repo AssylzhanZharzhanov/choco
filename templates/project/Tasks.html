@@ -98,7 +98,32 @@
     </ul>
 
     {% if request.user == 'admin' %}
-        <h1 class="text-center my-3"> All tasks you give to financiers </h1>
+        <h1 class="text-center my-3"> There are all tasks were given to financiers </h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    {% if found %}
+                        <table>
+                            <thead class="notequal-thead">
+                                <th> ID </th>
+                                <th> DATE </th>
+                                <th> UPDATED DATE</th>
+                                <th> TIME </th>
+                                <th> UPDATED TIME </th>
+                                <th> TRANSFER </th>
+                                <th> FEE </th>
+                                <th> TOTAL </th>
+                                <th> REFERENCE </th>
+                                <th> BANK </th>
+                            </thead>
+                    {% endif %}
+                    {% if not found %}
+                        <h5 style="text-align: center"> You didn't give task for financiers </h5>
+                    {% endif %}
+                    </table>
+                </div>
+            </div>
+       </div>
 
 
     {% else %}

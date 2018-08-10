@@ -103,8 +103,8 @@
         <form method='post' class="d-flex justify-content-center">
             {% csrf_token %}
 {#             {{ form.as_p }}#}
-            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date"  style= 'width:200px'>
-            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date"  style= 'width:200px'>
+            <input class="form-control input-cal" type="date" id="example-date-input" name="start_date"  style= 'width:200px' value={{ request.session.start }}>
+            <input class="form-control input-cal" type="date" id="example-date-input" name ="end_date"  style= 'width:200px' value={{ request.session.end }}>
             <select name ="name" class="custom-select" id="inputGroupSelect04" style="width:200px">
                         <option value ="Kaspi">Kaspi</option>
                         <option value ="Processing">Processing</option>
@@ -225,6 +225,8 @@
                                 <option value ="Sabyrzhan">Sabyrzhan Adayev</option>
                             </select>
                              <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input type="hidden" name="start" value={{ request.session.start }}>
+                             <input type="hidden" name="end" value={{ request.session.end }}>
                              <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send</button>
                          </form>
                      {% endif %}
@@ -581,13 +583,19 @@
     </script>
 
     <script>
+            var rows = [];
 
         $("#table tr").click(function(){
            $(this).toggleClass('selected');
             var $tds = $(this).find('td');
-            if($tds.length != 0) {
-                var $currText = $tds.eq().text();
+            var row = "";
+            for(var i = 0; i< $tds.length; i++) {
+                if ($tds.length != 0) {
+                    var $currText = $tds.eq(i).text();
+                    row += $currText + " ";
+                }
             }
+            rows.push(row);
         });
 
         $('.ok').on('click', function(e){
@@ -595,12 +603,13 @@
             $("#table tr.selected").each(function(){
                 selected.push($('td', this).html());
             });
-            var val = $("#table tr.selected").val()
-            console.log(val)
+
             var str = "";
+
             for(var i = 0; i<selected.length; i++){
                 str += selected[i] + " ";
             }
+
              document.getElementById("selected_ids").value = str;
         });
 

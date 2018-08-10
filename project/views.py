@@ -272,8 +272,7 @@ class FormView(TemplateView):
         form = PostForm()
         direction = "ChocoToPayment"
         financiers = getUsers()
-        for i in financiers:
-            print(i)
+
         return render(request, self.template_name, {'form':form, 'direction':direction, 'username': auth.get_user(request).username})
 
     def post(self,request):
@@ -284,7 +283,6 @@ class FormView(TemplateView):
         fixbutton = request.POST.get("fix")
         name = request.POST.get("name")
         request.session["bank"] = name
-
         start = request.POST.get("start_date")
         end = request.POST.get("end_date")
         request.session['start'] = start
@@ -305,15 +303,20 @@ class FormView(TemplateView):
                 selected_ids = request.POST.get("selected_ids")
                 selected_ids_splitted = selected_ids.split(' ')
                 selected_ids_arr = []
-                print(selected_ids_splitted)
+                start = request.POST.get("start")
+                end = request.POST.get("end")
+
                 for i in selected_ids_splitted:
                     if i == '':
                         continue
                     selected_ids_arr.append(i)
 
+
                 for i in selected_ids_arr:
-                    message = Task(user=selected_user, ids=i)
+                    message = Task(user=selected_user, ids=i, start=start, end=end)
                     message.save()
+                    create_action(request.user, 'Admin sent a message to %s about transaction  which id: ' % (selected_user), i)
+
 
                 direction = "ChocoToPayment"
                 return render(request, self.template_name,{'name': name, 'equal': seq, 'notequal': snon, 'notfound': sfound,
@@ -768,7 +771,39 @@ class UpdatedData:
 
 
 
+def getNotEqual(start, end):
+    filename = '/home/mrx/Documents/choko-master/docs/api.json'
+    myfile = open(filename, 'r', encoding='Latin-1')
+    json_data = json.load(myfile)
 
+    datas = []
+    equal = []
+    notequal = []
+    notfound = []
+
+    for data in json_data:
+            tr = Transaction.objects.filter(id=data['order_id'], date__range=[start, end])
+            if len(tr) > 0:
+                for i in tr:
+                    if i.transfer == data['payment_amount'] and i.reference == data['payment_reference']:
+                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                        b = Data(data['order_id'], datetime.datetime.date(parser.parse(data['date_created'])),
+                                 datetime.datetime.time(parser.parse(data['date_created'])),
+                                 data['payment_reference'], data['payment_amount'], 0, data['payment_amount'],
+                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
+                        equal.append(a)
+                        equal.append(b)
+                    elif i.transfer != data['payment_amount'] and i.reference == data['payment_reference']:
+                        a = Data(i.id, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name)
+                        b = Data(data['order_id'],
+                                 datetime.datetime.date(parser.parse(data['date_created'])),
+                                 datetime.datetime.time(parser.parse(data['date_created'])),
+                                 data['payment_reference'],
+                                 data['payment_amount'], 0, data['payment_amount'],
+                                 Transaction.objects.get(id=data['order_id'], date__range=[start, end]).company)
+                        notequal.append(a)
+                        notequal.append(b)
+            return notequal
 
 
 class History(TemplateView):
@@ -927,26 +962,33 @@ class Tasks(TemplateView):
         if not request.user.is_authenticated:
             args = {'message': "Please enter your username and password! "}
             return render(request, 'login.html', args)
-        if request.user == 'admin':
+        elif request.user == 'admin':
             tasks = Task.objects.all()
 
             args = {'tasks':tasks}
             return render(request, self.template_name, args)
         else:
             username = request.user
+            print("heededede")
             datas_to_fix = Task.objects.filter(user=username)
-            ids = []
+            datas = []
             print(len(datas_to_fix))
             for i in datas_to_fix:
-                ids.append(i.ids)
-            datas = []
+                notequals = getNotEqual(i.start, i.end)
+                print(len(notequals))
+                for j in notequals:
+                    if i.ids == j.id:
+                        datas.append(j)
 
-            for i in ids:
-                transaction=Transaction.objects.filter(id=i)
-                
-
-            for i in notequals_to_fix:
+            for i in datas:
                 print(i.id)
+            # for i in ids:
+            #     for data in json_data:
+            #         if i == data[i]['order_id']:
+                     # transaction=Transaction.objects.filter(id=i)
+
+            #get a request from api
+            #json
 
 
         return render(request, self.template_name, {})

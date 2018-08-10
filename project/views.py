@@ -100,7 +100,7 @@ def insertData(datas, request):
                  Transaction.objects.filter(id = datas[i]['id'],date = datas[i]['date']).update(time = datas[i]['time'], transfer=datas[i]['transfer'], fee=datas[i]['fee'], total=datas[i]['total'], updated=True, update_time=datas[i]['time'], company="Chocotravel/Aviata",reference=datas[i]['reference'])
                  updated = UpdatedTransaction(ids = datas[i]['id'],date = datas[i]['date'],time = datas[i]['time'], name = datas[i]['bank'], transfer=datas[i]['transfer'],
                                   fee=datas[i]['fee'], total=datas[i]['total'], update_time=datas[i]['time'], company="Chocotravel/Aviata",
-                                  reference=datas[i]['reference'], fixed=False)
+                                  reference=datas[i]['reference'], fixed=False, updated_date = datas[i]['date'])
                  create_action(request.user, 'While inserting a data by id %s was updated' %(datas[i]['id']), (datas[i]['id']))
                  updated.save()
                  # write to log if updated
@@ -284,8 +284,11 @@ class FormView(TemplateView):
         fixbutton = request.POST.get("fix")
         name = request.POST.get("name")
         request.session["bank"] = name
+
         start = request.POST.get("start_date")
         end = request.POST.get("end_date")
+        request.session['start'] = start
+        request.session['end'] = end
         direction = request.POST.get("direction")
         company =request.POST.get("company")
         filename = '/home/mrx/Documents/choko-master/docs/api.json'
@@ -332,7 +335,7 @@ class FormView(TemplateView):
                                 x['payment_amount'] = notFix[i].transfer
                                 transactions = Transaction.objects.get(id = Fix[i].id, reference=Fix[i].reference)
                                 Transaction.objects.filter(id=Fix[i].id).update(fixed=True)
-                                updateTransaction = UpdatedTransaction(ids = transactions.id, date = datetime.datetime.date(datetime.datetime.now()), time = transactions.time, name = transactions.name, transfer=transactions.transfer,
+                                updateTransaction = UpdatedTransaction(ids = transactions.id, date = transactions.date, update_date = datetime.datetime.date(datetime.datetime.now()), time = transactions.time, name = transactions.name, transfer=transactions.transfer,
                                       fee=transactions.fee, total=transactions.total, update_time=datetime.datetime.time(datetime.datetime.now()), company=transactions.company,
                                       reference=transactions.reference, fixed=True)
                                 updateTransaction.save()
@@ -735,60 +738,8 @@ class FormView(TemplateView):
                 return response
 
 
-class ParseForm(TemplateView):
-    template_name = 'project/update_list.html'
-
-    # simplelist = []
-    # for i in range(0, len(names)):
-    #         files = []
-    #         th = Parser(names[i], files)
-    #         th.start()
-    #         file = th.file
-    #         x = Payment(names[i], file)
-    #         simplelist.append(x)
-
-    def get(self, request):
-        return render(request, self.template_name, {})
-    def post(self,request):
-        # #getFilenames---------------
-        # submitbutton = request.POST.get('submit')
-        # if(submitbutton == 'Search'):
-        #     newFiles = False
-        #     simplelist = self.simplelist
-        #     if len(simplelist) > 0 :
-        #         newFiles = True
-        #     args = {'bank': simplelist[0].getName(), 'files': simplelist[0].getFiles(), 'newFiles': newFiles, 'button':submitbutton}
-        #     return render(request, 'project/update_list.html', args)
-        #
-        # if submitbutton == "Parse":
-        #     simplelist = self.simplelist
-        #     for i in range(0, len(simplelist)):
-        #         files = simplelist[i].getFiles()
-        #         name = simplelist[i].getName()
-        #         for j in files:
-        #             if name == 'kaspi':
-        #                 kaspi = KaspiParser(j)
-        #                 kaspi.getParse()
-        #             if names[i] == 'processing':
-        #                 nurbank = NurbankParser(j)
-        #                 nurbank.getParse()
-        #             if names[i] == 'tourism':
-        #                 tourism = ToursimParser(j)
-        #                 tourism.getParse()
-        #             if names[i] == 'kazkom':
-        #                 kazkom = KazkomParser(j)
-        #                 kazkom.getParse()
-        return redirect('/transaction')
-
-
-def update_list(request):
-     return render(request, 'project/update_list.html', {})
-
-def index(request):
-    return render(request,'project/index.html', {})
-
 class UpdatedData:
-    def __init__(self, id, date, time, reference, transfer, fee, total, bank, update_time):
+    def __init__(self, id, date, time, reference, transfer, fee, total, bank, update_time, updated_date):
         self.id = id
         self.date = date
         self.time=time
@@ -798,11 +749,13 @@ class UpdatedData:
         self.total = total
         self.bank = bank
         self.update_time = update_time
+        self.updated_date = updated_date
 
         def getArr(self):
             data = {
                 'id': self.id,
                 'date':self.date,
+                'updated_date':self.updated_date,
                 'time': self.time,
                 'transfer': self.transfer,
                 'reference': self.reference,
@@ -814,9 +767,12 @@ class UpdatedData:
             return data
 
 
+
+
+
+
 class History(TemplateView):
     template_name = 'project/History.html'
-
 
     def get(self, request):
         found = True
@@ -842,7 +798,7 @@ class History(TemplateView):
                     found = True
                 list = []
                 for i in transactions:
-                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date))
                 # for i in list:
                 #     print(i.id)
 
@@ -856,7 +812,7 @@ class History(TemplateView):
                     found = True
                 list = []
                 for i in transactions:
-                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date))
                 if found:
                     create_action(request.user,
                               'Searched updated transaction by id: %s' % (id), id)
@@ -876,7 +832,7 @@ class History(TemplateView):
 
                 # transactions = transactions.order_by('date', 'update_time', 'time')
                 for i in transactions:
-                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time))
+                    list.append(UpdatedData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name, i.update_time, i.update_date))
                 # id = UpdatedTransaction.objects.get(reference=reference).ids
                 # print(id)
 
@@ -971,21 +927,26 @@ class Tasks(TemplateView):
         if not request.user.is_authenticated:
             args = {'message': "Please enter your username and password! "}
             return render(request, 'login.html', args)
+        if request.user == 'admin':
+            tasks = Task.objects.all()
 
-        username = request.user
-        datas_to_fix = Task.objects.filter(user=username)
-        ids = []
-        print(len(datas_to_fix))
-        for i in datas_to_fix:
-            ids.append(i.ids)
-        datas = []
+            args = {'tasks':tasks}
+            return render(request, self.template_name, args)
+        else:
+            username = request.user
+            datas_to_fix = Task.objects.filter(user=username)
+            ids = []
+            print(len(datas_to_fix))
+            for i in datas_to_fix:
+                ids.append(i.ids)
+            datas = []
 
-        for i in ids:
-            transaction=Transaction.objects.filter(id=i)
+            for i in ids:
+                transaction=Transaction.objects.filter(id=i)
+                
 
-
-        for i in notequals_to_fix:
-            print(i.id)
+            for i in notequals_to_fix:
+                print(i.id)
 
 
         return render(request, self.template_name, {})

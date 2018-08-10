@@ -1,7 +1,6 @@
 from django.conf.urls import url
 from . import views
 from project.views import FormView
-from project.views import ParseForm
 from  project.views import History
 from project.views import Analytics
 from project.views import Tasks

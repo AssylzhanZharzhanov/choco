@@ -205,7 +205,7 @@
 
                     </table>
                   <form method="post">
-                                {% csrf_token %}
+                    {% csrf_token %}
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nondownload" >Download CSV</button>
                     <button class="btn btn-outline-info center-block" type = "submit" name = "submit" value = "nonexcel" >Download Excel</button>
                   </form>
@@ -359,9 +359,6 @@
 
 
 
-
-
-
 {#----------------------------------------------------------------------------------------------------------------#}
     {% if direction == "PaymentToChoco" %}
         <h1 class="text-center my-3"> {{ name }} Transactions</h1>
@@ -428,7 +425,6 @@
                             <td> {{ ps_notequal_total.reference }}</td>
                             <td> {{ ps_notequal_total.bank }}</td>
                         </tr>
-
                     </table>
                   <form method="post">
                                 {% csrf_token %}
@@ -451,10 +447,7 @@
 {#                            <button type="submit" class="btn btn-success ml-3 btn-2" name = "fix" style="float:right" value="fix">Fix datas</button>#}
 {#                        </form>#}
 {#                        {% endif %}#}
-
-
                 </div>
-
                 </div>
               </div>
               <div class="card">
@@ -577,8 +570,6 @@
               </div>
         </div>
             <div class="col-md-10 mx-auto">
-
-
             </div>
         </div>
     {% endif %}
@@ -593,7 +584,10 @@
 
         $("#table tr").click(function(){
            $(this).toggleClass('selected');
-           var value=$(this).find('td').html();
+            var $tds = $(this).find('td');
+            if($tds.length != 0) {
+                var $currText = $tds.eq().text();
+            }
         });
 
         $('.ok').on('click', function(e){
@@ -601,19 +595,18 @@
             $("#table tr.selected").each(function(){
                 selected.push($('td', this).html());
             });
+            var val = $("#table tr.selected").val()
+            console.log(val)
             var str = "";
             for(var i = 0; i<selected.length; i++){
                 str += selected[i] + " ";
             }
              document.getElementById("selected_ids").value = str;
-            {#sentMessage(selected);#}
         });
 
         function sentMessage(s){
             alert(s)
         }
-
-
 
         $(document).ready(function(){
            $('.btn-1').click(function() {

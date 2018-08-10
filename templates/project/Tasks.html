@@ -97,9 +97,13 @@
         {% endif %}
     </ul>
 
+    {% if request.user == 'admin' %}
+        <h1 class="text-center my-3"> All tasks you give to financiers </h1>
 
-    <h1 class="text-center my-3"> Tasks for you, {{ request.session.user }}  </h1>
 
+    {% else %}
+        <h1 class="text-center my-3"> Tasks for you, {{ request.session.user }}  </h1>
+    {% endif %}
 
 
 </body>

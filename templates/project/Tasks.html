@@ -221,10 +221,10 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
-                            <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#a">
+                            <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#a{{ i.id }}">
                               View Comment
                             </button></td>
-                    <div class="modal fade" id="a" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="a{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">

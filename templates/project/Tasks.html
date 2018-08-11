@@ -153,10 +153,10 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
-                             <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                             <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ i.user }}">
                               View Comment
                             </button></td>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="{{ i.user }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -221,10 +221,10 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
-                            <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#a">
                               View Comment
                             </button></td>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="a" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -282,10 +282,10 @@
                             <td> {{ i.total }}</td>
                             <td> {{ i.reference }}</td>
                             <td> {{ i.bank }}</td>
-                              <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                              <td>  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">
                               View Comment
                             </button></td>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -316,7 +316,68 @@
             </div>
         </div>
     </div>
+      <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+    </script>
 
+<script>
+     {#$("#table tr").click(function(){#}
+     {#      $(this).toggleClass('selected');#}
+     {#   });#}
+
+     $('.fix').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).eq(1).text());
+            });
+
+            var json_string = JSON.stringify(selected);
+            {#alert(json_string);#}
+            document.getElementById("ids").value = json_string;
+        });
+
+
+     {#$('.notequal').on('click', function(e){#}
+     {#       var selected = [];#}
+     {#       $("#table tr.selected").each(function(){#}
+     {#           selected.push($('td', this).eq(1).text());#}
+     {#       });#}
+     {##}
+     {#       var json_string = JSON.stringify(selected);#}
+            {#alert(json_string);#}
+     {#       document.getElementById("selected_ids_notequal").value = json_string;#}
+     {#   });#}
+     {##}
+     {#$('.notfound').on('click', function(e){#}
+     {#       var selected = [];#}
+     {#       $("#table tr.selected").each(function(){#}
+     {#           selected.push($('td', this).eq(1).text());#}
+     {#       });#}
+     {##}
+     {#       var json_string = JSON.stringify(selected);#}
+            {#alert(json_string);#}
+     {#       document.getElementById("selected_ids_notfound").value = json_string;#}
+     {#   });#}
+     {##}
+     {#$('.equal').on('click', function(e){#}
+     {#       var selected = [];#}
+     {#       $("#table tr.selected").each(function(){#}
+     {#           selected.push($('td', this).eq(1).text());#}
+     {#       });#}
+     {##}
+     {#       var json_string = JSON.stringify(selected);#}
+            {#alert(json_string);#}
+     {#       document.getElementById("selected_ids_equal").value = json_string;#}
+     {#   });#}
+     {##}
+     {##}
+     {##}
+     {#function sentMessage(s){#}
+     {#       alert(s)#}
+     {#   }#}
+</script>
     {% else %}
         <h1 class="text-center my-3"> There are all tasks were given to financiers </h1>
         <div class="container">
@@ -380,10 +441,10 @@
 
                         <form method="post">
                                      {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_notequal" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="user" value={{ request.user }}>
-                             <input type="text" name="comment" style="width: 300px; height: 100px">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                            <textarea name="comment" style="width: 300px; height: 100px"></textarea>
+                             <button class="btn btn-outline-info center-block notequal" id = "tst" type="submit" name="send" value="send">Send comment</button>
                   </form>
                   </div>
                 </div>
@@ -424,10 +485,10 @@
 
                 <form method="post">
                                      {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_notfound" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="user" value={{ user.get_username }}>
-                             <input type="text" name="comment" style="width: 500px; height: 100px;">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                             <textarea name="comment" style="width: 500px; height: 100px;"></textarea>
+                             <button class="btn btn-outline-info center-block notfound" id = "tst" type="submit" name="send" value="send">Send comment</button>
                   </form>
               </div>
             </div>
@@ -467,10 +528,10 @@
                 </table>
                   <form method="post">
                                      {% csrf_token %}
-                             <input id = "selected_ids" type="hidden" name="selected_ids" value="">
+                             <input id = "selected_ids_equal" type="hidden" name="selected_ids" value="">
                              <input type="hidden" name="user" value={{ request.user }}>
-                             <input type="text" name="comment" style="width: 300px; height: 100px">
-                             <button class="btn btn-outline-info center-block ok" id = "tst" type="submit" name="send" value="send">Send comment</button>
+                      <textarea name="comment" style="width: 300px; height: 100px"></textarea>
+                             <button class="btn btn-outline-info center-block equal" id = "tst" type="submit" name="send" value="send">Send comment</button>
                   </form>
                 </div>
                 </div>
@@ -480,9 +541,7 @@
     </div>
 
 
-
-    {% endif %}
-  <script
+      <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous">
@@ -493,32 +552,59 @@
            $(this).toggleClass('selected');
         });
 
-     $('.fix').on('click', function(e){
+     {#$('.fix').on('click', function(e){#}
+     {#       var selected = [];#}
+     {#       $("#table tr.selected").each(function(){#}
+     {#           selected.push($('td', this).eq(1).text());#}
+     {#       });#}
+     {##}
+     {#       var json_string = JSON.stringify(selected);#}
+            {#alert(json_string);#}
+     {#       document.getElementById("ids").value = json_string;#}
+     {#   });#}
+
+
+     $('.notequal').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
                 selected.push($('td', this).eq(1).text());
             });
 
             var json_string = JSON.stringify(selected);
-            alert(json_string);
-            document.getElementById("ids").value = json_string;
+            {#alert(json_string);#}
+            document.getElementById("selected_ids_notequal").value = json_string;
         });
 
-     $('.ok').on('click', function(e){
+     $('.notfound').on('click', function(e){
             var selected = [];
             $("#table tr.selected").each(function(){
                 selected.push($('td', this).eq(1).text());
             });
 
             var json_string = JSON.stringify(selected);
-            alert(json_string);
-            document.getElementById("selected_ids").value = json_string;
+            {#alert(json_string);#}
+            document.getElementById("selected_ids_notfound").value = json_string;
         });
+
+     $('.equal').on('click', function(e){
+            var selected = [];
+            $("#table tr.selected").each(function(){
+                selected.push($('td', this).eq(1).text());
+            });
+
+            var json_string = JSON.stringify(selected);
+            {#alert(json_string);#}
+            document.getElementById("selected_ids_equal").value = json_string;
+        });
+
+
 
      function sentMessage(s){
             alert(s)
         }
 </script>
+    {% endif %}
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

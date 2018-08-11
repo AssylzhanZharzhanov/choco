@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8061f4c4-bab2-488c-adeb-752e1657d213" name="Default" comment="'Tasks page step 2'">
+    <list default="true" id="8061f4c4-bab2-488c-adeb-752e1657d213" name="Default" comment="'Tasks page step 3'">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/project/Tasks.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/project/Tasks.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/lib/python3.5/site-packages/Django-2.0.7.dist-info/RECORD" beforeDir="false" afterPath="$PROJECT_DIR$/venv/lib/python3.5/site-packages/Django-2.0.7.dist-info/RECORD" afterDir="false" />
@@ -107,18 +108,18 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Django Console" value="16" />
-          <entry key="html" value="8904" />
+          <entry key="html" value="9216" />
           <entry key="json" value="2" />
-          <entry key="py" value="18039" />
-          <entry key="txt" value="334" />
+          <entry key="py" value="18268" />
+          <entry key="txt" value="335" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="8904" />
+          <entry key="HTML" value="9216" />
           <entry key="JSON" value="2" />
-          <entry key="PLAIN_TEXT" value="334" />
-          <entry key="Python" value="18055" />
+          <entry key="PLAIN_TEXT" value="335" />
+          <entry key="Python" value="18284" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -126,6 +127,7 @@
           <entry key="html" value="36" />
           <entry key="json" value="2" />
           <entry key="py" value="91" />
+          <entry key="rnc" value="1" />
           <entry key="txt" value="2" />
         </counts>
       </usages-collector>
@@ -135,6 +137,7 @@
           <entry key="JSON" value="2" />
           <entry key="PLAIN_TEXT" value="2" />
           <entry key="Python" value="91" />
+          <entry key="RNG Compact" value="1" />
         </counts>
       </usages-collector>
     </session>
@@ -144,15 +147,15 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
+            <state relative-caret-position="-67">
+              <caret line="65" column="25" lean-forward="true" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <marker date="1533937554832" expanded="true" signature="852:1024" ph="..." />
-                <marker date="1533937554832" expanded="true" signature="1065:1452" ph="..." />
-                <marker date="1533937554832" expanded="true" signature="1986:2476" ph="..." />
-                <marker date="1533937554832" expanded="true" signature="2013:2476" ph="..." />
-                <marker date="1533937554832" expanded="true" signature="2495:2502" ph="..." />
+                <marker date="1533945718951" expanded="true" signature="852:1024" ph="..." />
+                <marker date="1533945718951" expanded="true" signature="1065:1452" ph="..." />
+                <marker date="1533945718951" expanded="true" signature="1986:2477" ph="..." />
+                <marker date="1533945718951" expanded="true" signature="2013:2477" ph="..." />
+                <marker date="1533945718951" expanded="true" signature="2496:2503" ph="..." />
               </folding>
             </state>
           </provider>
@@ -183,8 +186,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="1119" lean-forward="true" selection-start-line="1119" selection-end-line="1119" />
+            <state relative-caret-position="-947">
+              <caret line="1064" column="35" selection-start-line="1064" selection-start-column="35" selection-end-line="1064" selection-end-column="35" />
               <folding>
                 <element signature="e#1943#2122#0" />
                 <element signature="e#2219#4638#0" />
@@ -193,6 +196,7 @@
                 <element signature="e#6810#7864#0" />
                 <element signature="e#7891#9239#0" />
                 <element signature="e#9469#9673#0" />
+                <element signature="e#9714#34120#0" />
                 <element signature="e#14837#22453#0" />
                 <element signature="e#19063#22453#0" />
                 <element signature="e#22512#23488#0" />
@@ -212,12 +216,12 @@
                 <element signature="e#38513#41164#0" />
                 <element signature="e#41204#41428#0" />
                 <element signature="e#41465#43392#0" />
-                <marker date="1533944916962" expanded="true" signature="10352:11133" ph="..." />
-                <marker date="1533944916962" expanded="true" signature="34829:35738" ph="..." />
-                <marker date="1533944916962" expanded="false" signature="39716:39721" ph="..." />
-                <marker date="1533944916962" expanded="true" signature="39716:39761" ph="..." />
-                <marker date="1533944916962" expanded="true" signature="44736:45501" ph="..." />
-                <marker date="1533944916962" expanded="true" signature="45527:45532" ph="..." />
+                <marker date="1533948316535" expanded="true" signature="10352:11133" ph="..." />
+                <marker date="1533948316535" expanded="true" signature="34850:35759" ph="..." />
+                <marker date="1533948316535" expanded="false" signature="39737:39742" ph="..." />
+                <marker date="1533948316535" expanded="true" signature="39737:39782" ph="..." />
+                <marker date="1533948316535" expanded="true" signature="44757:45522" ph="..." />
+                <marker date="1533948316535" expanded="true" signature="45548:45553" ph="..." />
               </folding>
             </state>
           </provider>
@@ -226,16 +230,18 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/project/Tasks.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="180" column="148" lean-forward="true" selection-start-line="180" selection-start-column="148" selection-end-line="180" selection-end-column="148" />
+            <state relative-caret-position="117">
+              <caret line="226" column="49" selection-start-line="226" selection-start-column="49" selection-end-line="226" selection-end-column="49" />
               <folding>
                 <element signature="n#style#0;n#html#0;n#!!top" />
                 <element signature="n#ul#0;n#body#0;n#html#0;n#!!top" />
-                <element signature="e#6273#6280#1#HTML" expanded="true" />
-                <element signature="e#8485#8492#1#HTML" expanded="true" />
+                <element signature="e#6263#6270#1#HTML" expanded="true" />
+                <element signature="n#style#0;n#button#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="e#10030#10037#1#HTML" expanded="true" />
                 <element signature="e#12979#12986#1#HTML" expanded="true" />
-                <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#style#0;n#textarea#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#textarea#0;n#form#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
@@ -305,6 +311,7 @@
       <find>prin</find>
       <find>json</find>
       <find>CREATE_ACTION</find>
+      <find>FIX</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -335,8 +342,8 @@
         <option value="$PROJECT_DIR$/templates/project/History.html" />
         <option value="$PROJECT_DIR$/untitled1/settings.py" />
         <option value="$PROJECT_DIR$/templates/project/transaction_list.html" />
-        <option value="$PROJECT_DIR$/project/models.py" />
         <option value="$PROJECT_DIR$/project/admin.py" />
+        <option value="$PROJECT_DIR$/project/models.py" />
         <option value="$PROJECT_DIR$/project/views.py" />
         <option value="$PROJECT_DIR$/templates/project/Tasks.html" />
       </list>
@@ -695,7 +702,14 @@
       <option name="project" value="LOCAL" />
       <updated>1533943599485</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="'Tasks page step 3'">
+      <created>1533945184843</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1533945184843</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TodoView">
@@ -712,17 +726,17 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.16012084" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.16012084" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="1" sideWeight="0.49848944" weight="0.32943144" />
       <window_info anchor="bottom" id="Database Changes" order="2" />
       <window_info anchor="bottom" id="Python Console" order="3" sideWeight="0.49471298" weight="0.32943144" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49471298" side_tool="true" visible="true" weight="0.42474917" />
+      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.49471298" side_tool="true" weight="0.42474917" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50981873" side_tool="true" weight="0.3528428" />
       <window_info anchor="bottom" id="Message" order="6" />
       <window_info anchor="bottom" id="Find" order="7" sideWeight="0.49924472" weight="0.32943144" />
-      <window_info active="true" anchor="bottom" id="Run" order="8" sideWeight="0.505287" visible="true" weight="0.42474917" />
+      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.505287" visible="true" weight="0.42474917" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
@@ -783,7 +797,8 @@
     <MESSAGE value="'buttons are inserted in html pages and Analytics pages is changed'" />
     <MESSAGE value="'Tasks page step 1'" />
     <MESSAGE value="'Tasks page step 2'" />
-    <option name="LAST_COMMIT_MESSAGE" value="'Tasks page step 2'" />
+    <MESSAGE value="'Tasks page step 3'" />
+    <option name="LAST_COMMIT_MESSAGE" value="'Tasks page step 3'" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -796,13 +811,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/untitled1/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/untitled1/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1016,21 +1024,6 @@
     <entry file="file://$PROJECT_DIR$/project/tests.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/project/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-            <marker date="1533937554832" expanded="true" signature="852:1024" ph="..." />
-            <marker date="1533937554832" expanded="true" signature="1065:1452" ph="..." />
-            <marker date="1533937554832" expanded="true" signature="1986:2476" ph="..." />
-            <marker date="1533937554832" expanded="true" signature="2013:2476" ph="..." />
-            <marker date="1533937554832" expanded="true" signature="2495:2502" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
@@ -1053,10 +1046,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/templates/project/History.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1177">
+          <caret line="139" column="41" selection-start-line="139" selection-start-column="41" selection-end-line="139" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/lib/pycharm.jar!/resources/html5-schema/html5/tables.rnc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="208" column="16" lean-forward="true" selection-start-line="208" selection-start-column="16" selection-end-line="208" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-67">
+          <caret line="65" column="25" lean-forward="true" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <marker date="1533945718951" expanded="true" signature="852:1024" ph="..." />
+            <marker date="1533945718951" expanded="true" signature="1065:1452" ph="..." />
+            <marker date="1533945718951" expanded="true" signature="1986:2477" ph="..." />
+            <marker date="1533945718951" expanded="true" signature="2013:2477" ph="..." />
+            <marker date="1533945718951" expanded="true" signature="2496:2503" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/project/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="1119" lean-forward="true" selection-start-line="1119" selection-end-line="1119" />
+        <state relative-caret-position="-947">
+          <caret line="1064" column="35" selection-start-line="1064" selection-start-column="35" selection-end-line="1064" selection-end-column="35" />
           <folding>
             <element signature="e#1943#2122#0" />
             <element signature="e#2219#4638#0" />
@@ -1065,6 +1087,7 @@
             <element signature="e#6810#7864#0" />
             <element signature="e#7891#9239#0" />
             <element signature="e#9469#9673#0" />
+            <element signature="e#9714#34120#0" />
             <element signature="e#14837#22453#0" />
             <element signature="e#19063#22453#0" />
             <element signature="e#22512#23488#0" />
@@ -1084,35 +1107,30 @@
             <element signature="e#38513#41164#0" />
             <element signature="e#41204#41428#0" />
             <element signature="e#41465#43392#0" />
-            <marker date="1533944916962" expanded="true" signature="10352:11133" ph="..." />
-            <marker date="1533944916962" expanded="true" signature="34829:35738" ph="..." />
-            <marker date="1533944916962" expanded="false" signature="39716:39721" ph="..." />
-            <marker date="1533944916962" expanded="true" signature="39716:39761" ph="..." />
-            <marker date="1533944916962" expanded="true" signature="44736:45501" ph="..." />
-            <marker date="1533944916962" expanded="true" signature="45527:45532" ph="..." />
+            <marker date="1533948316535" expanded="true" signature="10352:11133" ph="..." />
+            <marker date="1533948316535" expanded="true" signature="34850:35759" ph="..." />
+            <marker date="1533948316535" expanded="false" signature="39737:39742" ph="..." />
+            <marker date="1533948316535" expanded="true" signature="39737:39782" ph="..." />
+            <marker date="1533948316535" expanded="true" signature="44757:45522" ph="..." />
+            <marker date="1533948316535" expanded="true" signature="45548:45553" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/project/History.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1177">
-          <caret line="139" column="41" selection-start-line="139" selection-start-column="41" selection-end-line="139" selection-end-column="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/project/Tasks.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="180" column="148" lean-forward="true" selection-start-line="180" selection-start-column="148" selection-end-line="180" selection-end-column="148" />
+        <state relative-caret-position="117">
+          <caret line="226" column="49" selection-start-line="226" selection-start-column="49" selection-end-line="226" selection-end-column="49" />
           <folding>
             <element signature="n#style#0;n#html#0;n#!!top" />
             <element signature="n#ul#0;n#body#0;n#html#0;n#!!top" />
-            <element signature="e#6273#6280#1#HTML" expanded="true" />
-            <element signature="e#8485#8492#1#HTML" expanded="true" />
+            <element signature="e#6263#6270#1#HTML" expanded="true" />
+            <element signature="n#style#0;n#button#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="e#10030#10037#1#HTML" expanded="true" />
             <element signature="e#12979#12986#1#HTML" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#style#0;n#textarea#0;n#form#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#textarea#0;n#form#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#2;n#form#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>

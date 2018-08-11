@@ -339,9 +339,9 @@ class FormView(TemplateView):
                     print(i)
                 for i in datas:
                     message = Task(user=selected_user,ids=i['id'], time=datetime.datetime.time(parser.parse(i['time'])), date=datetime.datetime.date(parser.parse(i['date'])),
-                                   name=i['bank'], transfer= float(i['transfer']), fee=float(i['fee']), total=float(i['total']), reference=i['reference'], status=i['status'])
+                                   name=i['bank'], transfer= float(i['transfer']), fee=float(i['fee']), total=float(i['total']), reference=i['reference'], status=i['status'], comment=' ')
                     message.save()
-                    create_action(request.user, "Admin gave a task to %s inform transaction by id: %s" % (selected_user, i['id']))
+                    create_action(request.user, "Admin gave a task to %s inform transaction by id: %s" %(selected_user, i['id']), i['id'])
 
                     # print(datetime.datetime.date(parser.parse(i['date'])))
                     # print(datetime.datetime.time(parser.parse(i['time'])))
@@ -1062,6 +1062,9 @@ class Tasks(TemplateView):
                 data = TaskData(i.ids,i.date,i.time,i.reference,i.transfer,i.fee,i.total,i.name,i.user,i.comment)
                 notequal_list.append(data)
 
+            for i in notequal_list:
+                print(i.user, i.id, i.comment)
+
             for i in notfound:
                 data = TaskData(i.ids, i.date, i.time, i.reference, i.transfer, i.fee, i.total, i.name,i.user,i.comment)
                 notfound_list.append(data)
@@ -1100,8 +1103,6 @@ class Tasks(TemplateView):
 
     def post(self, request):
         username = request.user
-        ids = request.POST.get("ids")
-        comment = request.POST.get("comment")
         fix_button = request.POST.get("fix")
         send = request.POST.get("send")
 
@@ -1110,6 +1111,7 @@ class Tasks(TemplateView):
             user = request.POST.get("user")
             comment = request.POST.get("comment")
             selected_ids = json.loads(request.POST.get("selected_ids"))
+            print(selected_ids)
             ids_arr = []
             for i in selected_ids:
                 str = i.split(' ')
@@ -1119,16 +1121,61 @@ class Tasks(TemplateView):
                     ids_arr.append(j)
 
             for i in ids_arr:
-                Task.objects.filter(user=username, ids = i).update(comment=comment)
+                Task.objects.filter(user=user, ids = i).update(comment=comment)
                 create_action(request.user,
                               'Inserted comment transaction to transaction which id: %s' % (i), i)
 
             return self.get(request)
 
         #fix datas
-        # if fix_button == 'fix':
+        if fix_button == 'fix':
+            ids = json.loads(request.POST.get("ids"))
+            ids_arr = []
+            for i in ids:
+                str = i.split(' ')
+                for j in str:
+                    if j == ' ':
+                        continue
+                    ids_arr.append(j)
+
+            filename = '/home/mrx/Documents/choko-master/docs/api.json'
+            myfile = open(filename, 'r', encoding='Latin-1')
+            json_data = json.load(myfile)
+
+            # fix_datas = Task.objects.filter(user=username, )
+
+            # for i in range(0, len(fix_datas)):
+            #     if (i % 2 == 0):
+            #         notFix.append(fix_datas[i])
+            #     else:
+            #         Fix.append(fix_datas[i])
+            #
+            # for i in range(0, len(Fix)):
+            #     if (Fix[i].transfer != notFix[i].transfer):
+            #         for x in json_data:
+            #             if x['order_id'] == Fix[i].id and x['payment_reference'] == Fix[i].reference:
+            #                 x['payment_amount'] = notFix[i].transfer
+            #                 transactions = Transaction.objects.get(id=Fix[i].id, reference=Fix[i].reference)
+            #                 Transaction.objects.filter(id=Fix[i].id).update(fixed=True)
+            #                 updateTransaction = UpdatedTransaction(ids=transactions.id, date=transactions.date,
+            #                                                        update_date=datetime.datetime.date(
+            #                                                            datetime.datetime.now()), time=transactions.time,
+            #                                                        name=transactions.name,
+            #                                                        transfer=transactions.transfer,
+            #                                                        fee=transactions.fee, total=transactions.total,
+            #                                                        update_time=datetime.datetime.time(
+            #                                                            datetime.datetime.now()),
+            #                                                        company=transactions.company,
+            #                                                        reference=transactions.reference, fixed=True)
+            #                 updateTransaction.save()
+            #                 print(request.session["bank"])
+            #                 create_action(request.user,
+            #                               "Fixed %s datas by id: %s" % (transactions.name, transactions.id),
+            #                               transactions.id)
 
 
+            for i in ids_arr:
+                print(i)
 
         # Task.objects.filter(user=username, id =)
 

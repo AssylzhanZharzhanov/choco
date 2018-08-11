@@ -77,6 +77,7 @@ class Task(models.Model):
     status = models.CharField(max_length=200)
 
 
+
 # def insert(self):
 #     self.save()
 
